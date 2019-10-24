@@ -86,3 +86,10 @@ clean_sensor:
 
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
+
+# esLint setup
+BIN := ./node_modules/.bin
+ESLINT ?= $(BIN)/eslint
+
+lint:
+  @$(ESLINT) .
