@@ -29,8 +29,10 @@ SENSOR_SRC_FILES := $(wildcard $(SENSOR_SRC_DIR)/*.cpp )
 SENSOR_OBJ_FILES := $(patsubst $(SENSOR_SRC_DIR)/%.cpp,$(SENSOR_OBJ_DIR)/%.o,$(SENSOR_SRC_FILES))
 SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSOR_OBJ_FILES))
 
+HUB_SRC_DIR := hub/src
+
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -90,6 +92,15 @@ clean_hub:
 # esLint setup
 BIN := ./node_modules/.bin
 ESLINT ?= $(BIN)/eslint
+ESLINTRC := .eslintrc
 
-lint:
-  @$(ESLINT) .
+$(ESLINT):
+	@echo "Requires Node.js >= 8.10, npm version 3+"
+	npm install eslint --save-dev
+
+$(ESLINTRC): $(ESLINT)
+	$(ESLINT) --init
+
+eslint: $(ESLINTRC)
+	$(ESLINT) $(HUB_SRC_DIR)
+
