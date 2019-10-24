@@ -1,5 +1,7 @@
 # Ignore Mac specific files
 .DS_Store
+#ignore reports
+sensor/reports
 
 #C++ gitignore
 # Prerequisites

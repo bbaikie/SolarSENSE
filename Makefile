@@ -19,7 +19,9 @@ PYTHON=${VENV_NAME}/bin/python3
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_CPPCHECK_DIR := $(SENSOR_REPORT_DIR)/cppcheck
 SENSOR_CPPCHECK_XML := $(SENSOR_CPPCHECK_DIR)/cppcheck_output.xml
-SENSOR_CPPCHECK_HTML := $(SENSOR_CPPCHECK_DIR)/cppcheck_output.html
+SENSOR_CPPCHECK_HTML := $(SENSOR_CPPCHECK_DIR)/index.html
+SENSOR_CLANG_ANALYZER_DIR := $(SENSOR_REPORT_DIR)/clang_analyzer
+SENSOR_CLANG_ANALYZER_HTML := $(SENSOR_CLANG_ANALYZER_DIR)/index.html
 SENSOR_BIN_DIR := sensor/bin
 SENSOR_SRC_DIR := sensor/src
 SENSOR_OBJ_DIR := sensor/obj
@@ -28,7 +30,7 @@ SENSOR_OBJ_FILES := $(patsubst $(SENSOR_SRC_DIR)/%.cpp,$(SENSOR_OBJ_DIR)/%.o,$(S
 SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSOR_OBJ_FILES))
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -46,8 +48,10 @@ flash_sensor:
 
 sensor: $(SENSOR_BIN_FILES)
 
+check_sensor: sensor_clang_analyzer sensor_cppcheck
+
 $(SENSOR_CPPCHECK_XML):
-	mkdir $(SENSOR_REPORT_DIR)/cppcheck
+	mkdir -p $(SENSOR_CPPCHECK_DIR)
 	cppcheck $(SENSOR_SRC_DIR) --xml 2> $(SENSOR_CPPCHECK_XML)
 
 $(SENSOR_CPPCHECK_HTML): $(SENSOR_CPPCHECK_XML)
@@ -60,6 +64,15 @@ sensor_cppcheck_no_report:
 	@echo "cppcheck must be installed on your system and in your \$$PATH"
 	cppcheck $(SENSOR_SRC_DIR)
 
+$(SENSOR_CLANG_ANALYZER_HTML):
+	mkdir -p $(SENSOR_CLANG_ANALYZER_DIR)
+	scan-build -k -o $(SENSOR_CLANG_ANALYZER_DIR) make sensor
+
+sensor_clang_analyzer: $(SENSOR_CLANG_ANALYZER_HTML)
+	@echo "clang analyzer must be installed with scan-build in your \$$PATH"
+	@echo "Apparently \"Windows users must have Perl installed\""
+	@echo "check http://clang-analyzer.llvm.org/scan-build.html if you're having issues"
+
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
@@ -69,7 +82,7 @@ clean: clean_sensor clean_hub
 clean_sensor:
 	rm -rf $(SENSOR_OBJ_DIR)/*.o 
 	rm -rf $(SENSOR_BIN_DIR)/*
-	rm -rf $(SENSOR_REPORT_DIR)/*
+	rm -rf $(SENSOR_REPORT_DIR)
 
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
