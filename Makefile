@@ -9,12 +9,9 @@
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
 
 CXX = g++
+PYTHON = python3
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
-
-VENV_NAME?=venv
-VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
-PYTHON=${VENV_NAME}/bin/python3
 
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_CPPCHECK_DIR := $(SENSOR_REPORT_DIR)/cppcheck
@@ -32,7 +29,7 @@ SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSO
 HUB_SRC_DIR := hub/src
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -89,13 +86,15 @@ clean_sensor:
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
+npm:
+	apt install nodejs npm node-semver
+
 # esLint setup
 BIN := ./node_modules/.bin
 ESLINT ?= $(BIN)/eslint
 ESLINTRC := .eslintrc
 
-$(ESLINT):
-	@echo "Requires Node.js >= 8.10, npm version 3+"
+$(ESLINT): npm
 	npm install eslint --save-dev
 
 $(ESLINTRC): $(ESLINT)
@@ -106,10 +105,10 @@ eslint: $(ESLINTRC)
 
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
-	apt install python3 python3-pip
+	apt install $(PYTHON) $(PYTHON)-pip
 
 pip: python
-	python3 -m ensurepip --upgrade
+	$(PYTHON) -m ensurepip --upgrade
 
 pip-prospector: pip
 	pip3 install prospector
