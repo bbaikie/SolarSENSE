@@ -32,7 +32,7 @@ SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSO
 HUB_SRC_DIR := hub/src
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -104,6 +104,15 @@ $(ESLINTRC): $(ESLINT)
 eslint: $(ESLINTRC)
 	$(ESLINT) $(HUB_SRC_DIR)
 
-prospector:
-	@echo "python prospector (https://github.com/PyCQA/prospector) must be installed with prospector in your \$$PATH"
+#May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
+python:
+	apt install python3 python3-pip
+
+pip: python
+	python3 -m ensurepip --upgrade
+
+pip-prospector: pip
+	pip3 install prospector
+
+prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
