@@ -29,7 +29,7 @@ SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSO
 HUB_SRC_DIR := hub/src
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -71,6 +71,13 @@ sensor_clang_analyzer: $(SENSOR_CLANG_ANALYZER_HTML)
 	@echo "clang analyzer must be installed with scan-build in your \$$PATH"
 	@echo "Apparently \"Windows users must have Perl installed\""
 	@echo "check http://clang-analyzer.llvm.org/scan-build.html if you're having issues"
+
+pip-cpplint: pip
+	pip3 install cpplint
+
+cpplint: pip-cpplint
+	#may need to change output format
+	cpplint --recursive $(SENSOR_SRC_DIR)
 
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
