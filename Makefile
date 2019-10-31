@@ -27,6 +27,9 @@ SENSOR_OBJ_FILES := $(patsubst $(SENSOR_SRC_DIR)/%.cpp,$(SENSOR_OBJ_DIR)/%.o,$(S
 SENSOR_BIN_FILES := $(patsubst $(SENSOR_OBJ_DIR)/%.o,$(SENSOR_BIN_DIR)/%,$(SENSOR_OBJ_FILES))
 
 HUB_SRC_DIR := hub/src
+HUB_TEST_DIR := hub/src/test
+HUB_REPORT_DIR := hub/reports
+HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint
@@ -120,5 +123,14 @@ pip: python
 pip-prospector: pip
 	pip3 install prospector
 
+pip-pytest: pip
+	pip3 install -U pytest
+
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
+
+#Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
+pytest: pip-pytest
+	mkdir -p $(HUB_PYTEST_DIR)
+	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
+	
