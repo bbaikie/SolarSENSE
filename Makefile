@@ -12,8 +12,12 @@ CXX = g++
 PYTHON = python3
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
+CXXFLAGS = --coverage
 
 SENSOR_REPORT_DIR := sensor/reports
+SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
+SENSOR_GCOV_COV_DIR := $(SENSOR_GCOV_DIR)/cov
+SENSOR_GCOV_FILES := $(patsubst $(SENSOR_SRC_DIR)/%.cpp,$(SENSOR_GCOV_DIR)/%.gcov,$(SENSOR_SRC_FILES))
 SENSOR_CPPCHECK_DIR := $(SENSOR_REPORT_DIR)/cppcheck
 SENSOR_CPPCHECK_XML := $(SENSOR_CPPCHECK_DIR)/cppcheck_output.xml
 SENSOR_CPPCHECK_HTML := $(SENSOR_CPPCHECK_DIR)/index.html
@@ -32,7 +36,7 @@ HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -50,7 +54,7 @@ flash_sensor:
 
 sensor: $(SENSOR_BIN_FILES)
 
-check_sensor: sensor_clang_analyzer sensor_cppcheck
+check_sensor: sensor_clang_analyzer sensor_cppcheck gcov
 
 $(SENSOR_CPPCHECK_XML):
 	mkdir -p $(SENSOR_CPPCHECK_DIR)
@@ -82,6 +86,11 @@ cpplint: pip-cpplint
 	#may need to change output format
 	cpplint --recursive $(SENSOR_SRC_DIR)
 
+$(SENSOR_GCOV_DIR)/%.gcov: $(SENSOR_SRC_DIR)/%.cpp
+	gcov -d -o $(SENSOR_OBJ_DIR) $<
+
+gcov: $(SENSOR_GCOV_FILES)
+
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
@@ -89,7 +98,7 @@ hub:
 clean: clean_sensor clean_hub
 
 clean_sensor:
-	rm -rf $(SENSOR_OBJ_DIR)/*.o 
+	rm -rf $(SENSOR_OBJ_DIR)/*
 	rm -rf $(SENSOR_BIN_DIR)/*
 	rm -rf $(SENSOR_REPORT_DIR)
 
