@@ -26,16 +26,12 @@ ASU SER401 SolarSENSE capstone group for the 2019-2020 school year
 1. Navigate to System Preferences -> Sharing.
 2. Turn on internet sharing for thunderbolt ethernet.
 3. Connect your raspberry pi using an ethernet cable.
+4. Open the terminal and enter:
+    `$ ssh pi@192.168.2.2` 
+5. Enter raspberry when prompted for a password.
 
 #### Windows 7/8/10
 - [Set up windows with raspberry pi](https://anwaarullah.wordpress.com/2013/08/12/sharing-wifi-internet-connection-with-raspberry-pi-through-lanethernet-headless-mode/)
-
-
-### Connecting to the raspberry pi with SSH.
-
-1. Open the terminal and enter:
-    `$ ssh pi@192.168.2.2` 
-Enter raspberry when prompted for a password.
 
 ### Install solarSENSE hub
 Use `$ make init` to install dependencies and testing software.
