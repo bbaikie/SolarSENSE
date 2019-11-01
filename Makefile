@@ -36,10 +36,14 @@ HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init
 
 help:
 	@echo "TODO list targets and what they do here"
+
+#Various commands to set up repo and dev environment
+init:
+	git config core.hooksPath .githooks
 
 all: hub sensor
 
@@ -106,6 +110,7 @@ clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
 npm:
+	@echo "We should change this to say make sure npm is installed, since it'll be different on mac, windows, and different linux distros"
 	apt install nodejs npm node-semver
 
 # esLint setup
@@ -124,6 +129,7 @@ eslint: $(ESLINTRC)
 
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
+	@echo "We should change this to say make sure python and pip are installed, since it'll be different on mac, windows, and different linux distros"
 	apt install $(PYTHON) $(PYTHON)-pip
 
 pip: python
@@ -142,4 +148,4 @@ prospector: pip-prospector
 pytest: pip-pytest
 	mkdir -p $(HUB_PYTEST_DIR)
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
-	
+
