@@ -36,14 +36,17 @@ HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier
 
 help:
 	@echo "TODO list targets and what they do here"
 
 #Various commands to set up repo and dev environment
-init:
+init: prettier
 	git config core.hooksPath .githooks
+
+prettier: npm
+	npm install --save-dev --save-exact prettier
 
 all: hub sensor
 
