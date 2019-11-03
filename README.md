@@ -57,7 +57,7 @@ ASU SER401 SolarSENSE capstone group for the 2019-2020 school year
 5. Navigate to /var/lib/misc/
 6. Open up dnsmasq.leases and record the ip address listed under raspberry pi.
 
-### Directly
+#### Directly
 If you have a spare screen and keyboard you can directly interact with the raspberry pi.
 To access the internet add a wifi network following [these](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) instructions.
 
