@@ -108,4 +108,4 @@ prospector:
 	@echo "python prospector (https://github.com/PyCQA/prospector) must be installed with prospector in your \$$PATH"
 	prospector $(HUB_SRC_DIR)
 
-//testing GitHub connection from terminal to GitHub
+//testing GitHub connection from terminal to GitHub 
