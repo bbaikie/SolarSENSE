@@ -8,10 +8,21 @@
 # https://blog.horejsek.com/makefile-with-python/
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
 
+#C++ setup
 CXX = g++
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
 
+
+SRCEXT := cpp
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT)
+OBJECTS := $(patsubst $(SRCDIR)/%, $(BUILDDIR)/%,$(SOURCE:.$(SRCEXT)=.o))
+CFLAGS := -g # -Wall
+LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+INC := -I include
+
+
+#Python setup
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=${VENV_NAME}/bin/python3
@@ -34,6 +45,8 @@ HUB_SRC_DIR := hub/src
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector
 
+
+#Python set
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 PYTHON=${VENV_NAME}/bin/python3
@@ -76,6 +89,30 @@ run: venv
 
 doc: venv
     $(VENV_ACTIVATE) && cd docs; make html
+
+
+#C++ set up
+$(TARGET): $(OBJECTS)
+  @echo " Linking..."
+  @echo "$(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+  @mkdir -p $(BUILDDIR)
+  @echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+clean:
+  @echo " Cleaning..."; 
+  @echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+
+# Tests
+tester:
+  $(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+
+# Spikes
+ticket:
+  $(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
+
+.PHONY: clean
 
 all: hub sensor
 
@@ -148,7 +185,7 @@ prospector:
 	@echo "python prospector (https://github.com/PyCQA/prospector) must be installed with prospector in your \$$PATH"
 	prospector $(HUB_SRC_DIR)
 
-//testing GitHub connection from terminal to GitHub 
+# testing GitHub connection from terminal to GitHub 
 
-//simple makefile tools
+# simple makefile tools
 
