@@ -62,5 +62,7 @@ If you have a spare screen and keyboard you can directly interact with the raspb
 To access the internet add a wifi network following [these](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) instructions.
 
 ### Install solarSENSE hub
-Use `$ make init` to install dependencies and testing software.
+1. Copy the provided makefile to your raspberry pi with SCP.
+2. Connect to your raspberry pi with SSH.
+3. Use `$ make init` to install software and configure the pi as a hotspot.
 

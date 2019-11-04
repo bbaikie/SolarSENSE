@@ -116,20 +116,6 @@ npm:
 	@echo "We should change this to say make sure npm is installed, since it'll be different on mac, windows, and different linux distros"
 	apt install nodejs npm node-semver
 
-# esLint setup
-BIN := ./node_modules/.bin
-ESLINT ?= $(BIN)/eslint
-ESLINTRC := .eslintrc
-
-$(ESLINT): npm
-	npm install eslint --save-dev
-
-$(ESLINTRC): $(ESLINT)
-	$(ESLINT) --init
-
-eslint: $(ESLINTRC)
-	$(ESLINT) $(HUB_SRC_DIR)
-
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
 	@echo "We should change this to say make sure python and pip are installed, since it'll be different on mac, windows, and different linux distros"
