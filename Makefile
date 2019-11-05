@@ -12,9 +12,11 @@ CXX = g++
 PYTHON = python3
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
-CXXFLAGS = --coverage
+#CXXFLAGS = --coverage
+GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
 SENSOR_REPORT_DIR := sensor/reports
+SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
 SENSOR_GCOV_COV_DIR := $(SENSOR_GCOV_DIR)/cov
 SENSOR_GCOV_FILES := $(patsubst $(SENSOR_SRC_DIR)/%.cpp,$(SENSOR_GCOV_DIR)/%.gcov,$(SENSOR_SRC_FILES))
@@ -93,10 +95,18 @@ cpplint: pip-cpplint
 	#may need to change output format
 	cpplint --recursive $(SENSOR_SRC_DIR)
 
-$(SENSOR_GCOV_DIR)/%.gcov: $(SENSOR_SRC_DIR)/%.cpp
-	gcov -d -o $(SENSOR_OBJ_DIR) $<
+gcov:
+	#https://courses.cs.washington.edu/courses/cse333/11sp/lectures/lec10_exercises/Makefile.html
+	#http://gcovr.com/en/stable/guide.html
+	#basically need to recompile everything with gcov flags, including the testcoverage file, then run gcovr to generate the html report
+	#TODO ensure gcovr is installed, cleanup/improve dependencies
+	cp -r $(SENSOR_SRC_DIR) $(SENSOR_TEST_DIR)
+	cd $(SENSOR_TEST_DIR)
+	$(CXX) $(CXXFLAGS) $(GCOVFLAGS) -o testing -I$(SENSOR_TEST_DIR)/src testing.c
+	./testing
+	gcovr -r . --html -o $(SENSOR_REPORT_DIR)/gcov/index.html
 
-gcov: $(SENSOR_GCOV_FILES)
+
 
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
