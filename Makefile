@@ -38,7 +38,7 @@ HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
-.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier
+.PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
 
 help:
 	@echo "TODO list targets and what they do here"
@@ -95,15 +95,20 @@ cpplint: pip-cpplint
 	#may need to change output format
 	cpplint --recursive $(SENSOR_SRC_DIR)
 
-gcov:
+pip-gcovr: pip
+	pip3 install gcovr
+
+gcov: pip-gcovr
 	#https://courses.cs.washington.edu/courses/cse333/11sp/lectures/lec10_exercises/Makefile.html
 	#http://gcovr.com/en/stable/guide.html
 	#basically need to recompile everything with gcov flags, including the testcoverage file, then run gcovr to generate the html report
-	#TODO ensure gcovr is installed, cleanup/improve dependencies
-	cp -r $(SENSOR_SRC_DIR) $(SENSOR_TEST_DIR)
+	#change the working directory to the test directory
 	cd $(SENSOR_TEST_DIR)
-	$(CXX) $(CXXFLAGS) $(GCOVFLAGS) -o testing -I$(SENSOR_TEST_DIR)/src testing.c
+	#recompile everything for testing purposes. Assumes all tests included in testing.c
+	$(CXX) $(CXXFLAGS) $(GCOVFLAGS) -o testing -I$(SENSOR_SRC_DIR) testing.c
+	#Run the tests
 	./testing
+	#generate the html report
 	gcovr -r . --html -o $(SENSOR_REPORT_DIR)/gcov/index.html
 
 
@@ -115,6 +120,7 @@ hub:
 clean: clean_sensor clean_hub
 
 clean_sensor:
+	#TODO clean out the unnecessary stuff in the test directory
 	rm -rf $(SENSOR_OBJ_DIR)/*
 	rm -rf $(SENSOR_BIN_DIR)/*
 	rm -rf $(SENSOR_REPORT_DIR)
