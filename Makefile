@@ -160,7 +160,7 @@ setup-server: pip
 	pip install gunicorn
 	cd ~
 	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .local
-	gunicorn -w 4 -b 192.168.2.2:8080 test.wsgi:
+	gunicorn -w 4 -b 192.168.2.2:8080 SolarDjango.wsgi:
 
 wifi: 
 	sudo apt install dnsmasq hostapd
