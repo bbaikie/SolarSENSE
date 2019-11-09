@@ -154,3 +154,33 @@ pytest: pip-pytest
 	mkdir -p $(HUB_PYTEST_DIR)
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
 
+
+
+setup-server: pip 
+	pip install gunicorn
+	cd ~
+	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .local
+	gunicorn -w 4 -b 192.168.2.2:8080 test.wsgi:
+
+wifi: 
+	sudo apt install dnsmasq hostapd
+	sudo systemctl stop dnsmasq
+	sudo systemctl stop hostapd
+	sudo cp ~/config/dhcpcd.conf /etc/dhcpcd.conf
+	sudo service dhcpcd restart
+	sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
+	sudo cp ~/config/dnsmasq.conf /etc/dnsmasq.conf
+	sudo service dhcpcd restart
+	sudo systemctl start dnsmasq
+	sudo cp ~/config/hostapd.conf /etc/hostapd/hostapd.conf
+	sudo cp ~/config/hostapd /etc/default/hostapd
+	sudo systemctl unmask hostapd
+	sudo systemctl enable hostapd
+	sudo systemctl start hostapd
+	sudo cp ~/config/sysctl.conf /etc/sysctl.conf
+	sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
+	sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
+	sudo cp ~/config/rc.local /etc/rc.local
+	sudo reboot -h now
+
+	
