@@ -63,7 +63,8 @@ To access the internet add a wifi network following [these](https://www.raspberr
 
 ### Install solarSENSE hub
 1. SSH onto the raspberry pi.
-2. Execute the command `$ git clone URL` where URL is the url of the [SolarSENSE](https://github.com/jeremiah-miller/SolarSENSE/tree/dev-sprint3) repo.
-3. Navigate to the base directory of the SolarSENSE repo folder.
-4. Execute the command `$ make init`.
+2. Install [git](https://git-scm.com/downloads).
+3. Execute the command `$ git clone URL` where URL is the url of the [SolarSENSE](https://github.com/jeremiah-miller/SolarSENSE/tree/dev-sprint3) repository.
+4. Navigate to the base directory of the SolarSENSE repo folder.
+5. Execute the command `$ make init`.
 
