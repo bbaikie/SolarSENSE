@@ -14,13 +14,6 @@ PYTHON = python3
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
 
-SRCEXT := cpp
-SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT)
-OBJECTS := $(patsubst $(SRCDIR)/%, $(BUILDDIR)/%,$(SOURCE:.$(SRCEXT)=.o))
-CFLAGS := -g # -Wall
-LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
-INC := -I include
-
 #Python setup
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
@@ -68,34 +61,6 @@ help:
 	@echo "make doc"
 	@echo "	      build sphinx documentation"
 	
-prepare-dev:
-    sudo apt-get -y install python3.5 python3-pip
-    python3 -m pip install virtualenv
-    make venv
-
-venv: $(VENV_NAME)/bin/activate
-$(VENV_NAME)/bin/activate: setup.py
-    test -d $(VENV_NAME) || virtualenv -p python3 $(VENV_NAME)
-    ${PYTHON} -m pip install -U pip
-    ${PYTHON} -m pip install -e .
-    touch $(VENV_NAME)/bin/activate
-
-run: venv
-    ${PYTHON} app.y
-
-doc: venv
-    $(VENV_ACTIVATE) && cd docs; make html
-
-
-#C++ set up
-$(TARGET): $(OBJECTS)
-  @echo " Linking..."
-  @echo "$(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
-
-$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-  @mkdir -p $(BUILDDIR)
-  @echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
-
 #Various commands to set up repo and dev environment
 init: prettier
 	git config core.hooksPath .githooks
@@ -188,7 +153,7 @@ npm:
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
 	@echo "We should change this to say make sure python and pip are installed, since it'll be different on mac, windows, and different linux distros"
-	apt install $(PYTHON) $(PYTHON)-pip
+	apt install $(PYTHON) $(PYTHON)-pip virtualenv
 
 pip: python
 	$(PYTHON) -m ensurepip --upgrade
