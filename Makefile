@@ -8,10 +8,24 @@
 # https://blog.horejsek.com/makefile-with-python/
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
 
+#C++ setup
 CXX = g++
 PYTHON = python3
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
+
+SRCEXT := cpp
+SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT)
+OBJECTS := $(patsubst $(SRCDIR)/%, $(BUILDDIR)/%,$(SOURCE:.$(SRCEXT)=.o))
+CFLAGS := -g # -Wall
+LIB := -pthread -lmongoclient -L lib -lboost_thread-mt -lboost_filesystem-mt -lboost_system-mt
+INC := -I include
+
+#Python setup
+VENV_NAME?=venv
+VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
+PYTHON=${VENV_NAME}/bin/python3
+
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
@@ -40,8 +54,68 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
 
+.DEAFULT: help
 help:
 	@echo "TODO list targets and what they do here"
+	@echo "make prepare-dev"
+	@echo "	       prepare development environment, use only once"
+	@echo "make test"
+	@echo "       run tests"
+	@echo "make lint"
+	@echo "	      run pylint and mypy"
+	@echo "make run"
+	@echo "	      run project"
+	@echo "make doc"
+	@echo "	      build sphinx documentation"
+	
+prepare-dev:
+    sudo apt-get -y install python3.5 python3-pip
+    python3 -m pip install virtualenv
+    make venv
+
+venv: $(VENV_NAME)/bin/activate
+$(VENV_NAME)/bin/activate: setup.py
+    test -d $(VENV_NAME) || virtualenv -p python3 $(VENV_NAME)
+    ${PYTHON} -m pip install -U pip
+    ${PYTHON} -m pip install -e .
+    touch $(VENV_NAME)/bin/activate
+
+test: venv
+    ${PYTHON} -m pytest
+
+lint: venv
+    ${PYTHON} -m pylint
+    ${PYTHON} -m mypy
+
+run: venv
+    ${PYTHON} app.y
+
+doc: venv
+    $(VENV_ACTIVATE) && cd docs; make html
+
+
+#C++ set up
+$(TARGET): $(OBJECTS)
+  @echo " Linking..."
+  @echo "$(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+  @mkdir -p $(BUILDDIR)
+  @echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+clean:
+  @echo " Cleaning..."; 
+  @echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
+
+# Tests
+tester:
+  $(CC) $(CFLAGS) test/tester.cpp $(INC) $(LIB) -o bin/tester
+
+# Spikes
+ticket:
+  $(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
+
+.PHONY: clean
 
 #Various commands to set up repo and dev environment
 init: prettier
@@ -149,13 +223,15 @@ pip-pytest: pip
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
 
+# testing GitHub connection from terminal to GitHub 
+
+# simple makefile tools
+
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
 pytest: pip-pytest
 	mkdir -p $(HUB_PYTEST_DIR)
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
-
-
-
+  
 setup-server: pip 
 	pip install gunicorn
 	cd ~
@@ -182,5 +258,3 @@ wifi:
 	sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 	sudo cp ~/config/rc.local /etc/rc.local
 	sudo reboot -h now
-
-	
