@@ -80,13 +80,6 @@ $(VENV_NAME)/bin/activate: setup.py
     ${PYTHON} -m pip install -e .
     touch $(VENV_NAME)/bin/activate
 
-test: venv
-    ${PYTHON} -m pytest
-
-lint: venv
-    ${PYTHON} -m pylint
-    ${PYTHON} -m mypy
-
 run: venv
     ${PYTHON} app.y
 
