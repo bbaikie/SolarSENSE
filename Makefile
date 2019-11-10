@@ -115,8 +115,6 @@ tester:
 ticket:
   $(CC) $(CFLAGS) spikes/ticket.cpp $(INC) $(LIB) -o bin/ticket
 
-.PHONY: clean
-
 #Various commands to set up repo and dev environment
 init: prettier
 	git config core.hooksPath .githooks
@@ -184,9 +182,7 @@ gcov: pip-gcovr
 	./testing
 	#generate the html report
 	gcovr -r . --html -o $(SENSOR_REPORT_DIR)/gcov/index.html
-
-
-
+	
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
