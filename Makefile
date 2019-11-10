@@ -29,7 +29,6 @@ PYTHON=${VENV_NAME}/bin/python3
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
-
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
@@ -54,12 +53,6 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
-
-
-#Python set
-VENV_NAME?=venv
-VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
-PYTHON=${VENV_NAME}/bin/python3
 
 .DEAFULT: help
 help:
@@ -229,7 +222,6 @@ pip-pytest: pip
 
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
-
 
 # testing GitHub connection from terminal to GitHub 
 
