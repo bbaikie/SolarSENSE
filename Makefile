@@ -1,3 +1,4 @@
+include sensor/makeEspArduino.mk
 #Useful sources:
 # C++
 # https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/
