@@ -7,6 +7,11 @@
 # Python
 # https://blog.horejsek.com/makefile-with-python/
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
+# 
+# Makefile basics
+# http://www.math.utah.edu/docs/info/standards_5.html#SEC7
+# https://www.gnu.org/software/texinfo/
+# https://www.gnu.org/software/automake/manual/html_node/Texinfo.html
 
 #C++ setup
 CXX = g++
@@ -21,8 +26,6 @@ PYTHON=${VENV_NAME}/bin/python3
 
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
-
-SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
 
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
@@ -51,11 +54,7 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 .DEAFULT: help
 help:
-	@echo "The following targets are available:"
-	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
-	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
-	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
-	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
+	@echo "TODO list targets and what they do here"
 	@echo "make prepare-dev"
 	@echo "	       prepare development environment, use only once"
 	@echo "make test"
@@ -76,11 +75,24 @@ prettier: npm
 
 all: hub sensor
 
-flash_sensor:
-	$(SENSOR_MAKE) flash
+#Generates info files needed
+MAKEINFO = /usr/bin/makeinfo
 
-sensor:
-	$(SENSOR_MAKE) all
+info: foo.info
+
+foo.info: foo.texi chap1.texi chap2.texi
+	$(MAKEINFO) $(srcdir)/foo.texi
+
+$(SENSOR_OBJ_DIR)/%.o: $(SENSOR_SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+$(SENSOR_BIN_DIR)/%: $(SENSOR_OBJ_DIR)/%.o
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+flash_sensor:
+	@echo "TODO Depends on having hardware."
+
+sensor: $(SENSOR_BIN_FILES)
 
 check_sensor: sensor_clang_analyzer sensor_cppcheck gcov
 
@@ -132,18 +144,21 @@ gcov: pip-gcovr
 
 
 
+#############
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
 
 clean: clean_sensor clean_hub
 
+############
 clean_sensor:
 	#TODO clean out the unnecessary stuff in the test directory
 	rm -rf $(SENSOR_OBJ_DIR)/*
 	rm -rf $(SENSOR_BIN_DIR)/*
 	rm -rf $(SENSOR_REPORT_DIR)
 
+############
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
