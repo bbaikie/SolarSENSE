@@ -16,13 +16,15 @@
 #C++ setup
 CXX = g++
 PYTHON = python3
+PIP = pip3
+NPM = npm
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
 
 #Python setup
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
-PYTHON=${VENV_NAME}/bin/python3
+#PYTHON=${VENV_NAME}/bin/python3
 
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
@@ -163,16 +165,14 @@ clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
 npm:
-	@echo "We should change this to say make sure npm is installed, since it'll be different on mac, windows, and different linux distros"
-	apt install nodejs npm node-semver
+	@if ! $(NPM) --version ; then echo "$(NPM) must be installed! If running on the hub, please run \"make init\", otherwise install $(NPM) on your computer properly" ; fi
 
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
-	@echo "We should change this to say make sure python and pip are installed, since it'll be different on mac, windows, and different linux distros"
-	apt install $(PYTHON) $(PYTHON)-pip virtualenv
+	@if ! $(PYTHON) --version ; then echo "$(PYTHON) must be installed! If running on the hub, please run \"make init\", otherwise install $(PYTHON) on your computer properly" ; fi
 
 pip: python
-	$(PYTHON) -m ensurepip --upgrade
+	@if ! $(PIP) --version ; then echo "$(PIP) must be installed! If running on the hub, please run \"make init\", otherwise install $(PIP) on your computer properly" ; fi
 
 pip-prospector: pip
 	pip3 install prospector
