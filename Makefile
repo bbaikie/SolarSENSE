@@ -8,7 +8,7 @@
 # https://blog.horejsek.com/makefile-with-python/
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
 
-//testing git hub connections
+//testing git hub connection
 #C++ setup
 CXX = g++
 PYTHON = python3
