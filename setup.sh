@@ -13,11 +13,11 @@ sudo apt-get upgrade -y
 #install all necessary packages
 echo "Installing necessary packages"
 
-sudo apt-get install -y hostapd dnsmasq nginx python3 python3-dev python3-pip build-essential mongodb-server git bluetooth bluez
+sudo apt-get install -y hostapd dnsmasq nginx python3 python3-dev python3-pip build-essential git bluetooth bluez
 
-sudo pip3 install flask uwsgi flask_wtf pymongo flask_jsonpify flask-cors numpy
+sudo pip3 install flask uwsgi flask_wtf flask_jsonpify flask-cors numpy
 
-python3 -m pip install pymongo==3.9.0
+#python3 -m pip install pymongo==3.9.0, no longer using pymongo or mongodb
 #look into later, might deal with soil data manipulation
 git clone https://github.com/ThomDietrich/miflora-mqtt-daemon.git /opt/miflora-mqtt-daemon
 
@@ -33,18 +33,18 @@ echo "-----Finished with Webserver Setup-----"
 
 echo "-----Starting Mongo Setup-----"
 
-echo "Setting up MongoDB"
+echo "Setting up PostgreSQL"
 
-#Setup MongoDB as a service
+#Setup PostgreSQL as a service
 #Might want to change structure of file setup?
 
 sudo mkdir -p /data/db/
 
 sudo chown -R `id -un` /data/db/
 
-sudo service mongodb start
+sudo service postgresql start
 
-echo "-----Finished with Mongo Setup-----"
+echo "-----Finished with PostgreSQL Setup-----"
 
 
 
@@ -52,17 +52,32 @@ echo "-----Starting Databases Setup-----"
 
 echo "Destroying All Databases if they exist"
 
-mongo solarsensereports --eval 'db.dropDatabase()'
+#Subject to further change and research.
+DROP DATABASE [ IF EXISTS ] solarsensereports
+
+#mongo solarsensereports --eval 'db.dropDatabase()'
+
+DROP DATABASE [ IF EXISTS ] Constraint
 
 #mongo Constraint --eval 'db.dropDatabase()'
 
+DROP DATABASE [ IF EXISTS ] CropFactor
+
 #mongo CropFactor --eval 'db.dropDatabase()'
+
+DROP DATABASE [ IF EXISTS ] HistoricalClimateData
 
 #mongo HistoricalClimateData --eval 'db.dropDatabase()'
 
+DROP DATABASE [ IF EXISTS ] Regions
+
 #mongo Regions --eval 'db.dropDatabase()'
 
+DROP DATABASE [ IF EXISTS ] MeanLightValues
+
 #mongo MeanLightValues --eval 'db.dropDatabase()'
+
+DROP DATABASE [ IF EXISTS ] FarmInfo
 
 #mongo FarmInfo --eval 'db.dropDatabase()'
 
@@ -76,15 +91,28 @@ cd $DIR/Database_Structures
 #--collection NAME creates a new collection if it doesn't exist or if it does it will just access and import data into collection
 #--file give it path to JSON file, takes the JSON file and create a table in the database with what's in the JSON file.
 
+#Will need to look into adding JSON files to the tables directly or deciding on whether to initialize all variables for each table here or later.
+CREATE DATABASE FarmInfo CREATE TABLE fields() #All of this is subject to change with more research, so far this is basic implementation of PostgreSQL.
+
 #mongoimport --db FarmInfo --collection fields --file ./DATAFILES/fields.json
+
+DATABASE FarmInfo CREATE TABLE sensors()
 
 #mongoimport --db FarmInfo --collection sensors --file ./DATAFILES/sensors.json
 
+DATABASE FarmInfo CREATE TABLE sensorData()
+
 #mongoimport --db FarmInfo --collection sensorData --file ./DATAFILES/sensorData.json
+
+CREATE DATABASE FarmInfoTest CREATE TABLE fields()
 
 #mongoimport --db FarmInfoTest --collection fields --file ./DATAFILES/fieldsTest.json
 
+DATABASE FarmInfoTest CREATE TABLE sensors()
+
 #mongoimport --db FarmInfoTest --collection sensors --file ./DATAFILES/sensorsTest.json
+
+DATABASE FarmInfoTest CREATE TABLE sensorData()
 
 #mongoimport --db FarmInfoTest --collection sensorData --file ./DATAFILES/sensorDataTest.json
 
