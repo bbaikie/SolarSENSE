@@ -23,6 +23,8 @@ PYTHON=${VENV_NAME}/bin/python3
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
+SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
+
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
@@ -50,7 +52,11 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 
 .DEAFULT: help
 help:
-	@echo "TODO list targets and what they do here"
+	@echo "The following targets are available:"
+	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
+	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
+	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
+	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
 	@echo "make prepare-dev"
 	@echo "	       prepare development environment, use only once"
 	@echo "make test"
@@ -71,16 +77,11 @@ prettier: npm
 
 all: hub sensor
 
-$(SENSOR_OBJ_DIR)/%.o: $(SENSOR_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(SENSOR_BIN_DIR)/%: $(SENSOR_OBJ_DIR)/%.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
 flash_sensor:
-	@echo "TODO Depends on having hardware."
+	$(SENSOR_MAKE) flash
 
-sensor: $(SENSOR_BIN_FILES)
+sensor:
+	$(SENSOR_MAKE) all
 
 check_sensor: sensor_clang_analyzer sensor_cppcheck gcov
 
