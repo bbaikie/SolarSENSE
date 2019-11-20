@@ -77,14 +77,6 @@ prettier: npm
 
 all: hub sensor
 
-#Generates info files needed
-MAKEINFO = /usr/bin/makeinfo
-
-info: foo.info
-
-foo.info: foo.texi chap1.texi chap2.texi
-	$(MAKEINFO) $(srcdir)/foo.texi
-
 $(SENSOR_OBJ_DIR)/%.o: $(SENSOR_SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
@@ -146,14 +138,14 @@ gcov: pip-gcovr
 
 
 
-#############
+#TODO
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
 
 clean: clean_sensor clean_hub
 
-############
+#TODO
 clean_sensor:
 	#TODO clean out the unnecessary stuff in the test directory
 	rm -rf $(SENSOR_OBJ_DIR)/*
@@ -183,9 +175,23 @@ pip-pytest: pip
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
 
-# testing GitHub connection from terminal to GitHub 
+# testing GitHub connection from terminal to GitHub
 
 # simple makefile tools
+
+#Generates info files needed
+MAKEINFO = /usr/bin/makeinfo
+
+info: foo.info
+
+foo.info: foo.texi chap1.texi chap2.texi
+	$(MAKEINFO) $(srcdir)/foo.texi
+
+#Rebuilds the Makefile if any of the configuration files have changes or if
+#Makefile.in has been modified
+
+Makefile : $(srcdir)/Makefile.in
+	$(SHELL) config.status
 
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
 pytest: pip-pytest
