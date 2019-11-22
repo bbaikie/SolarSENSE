@@ -19,4 +19,3 @@ sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
 sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
 sudo cp ~/config/rc.local /etc/rc.local
 sudo reboot -h now
-\n
