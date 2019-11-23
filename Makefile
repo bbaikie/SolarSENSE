@@ -86,8 +86,6 @@ make test: venv
 make run:
 	${PYTHON} app.py
 
-make doc:
-	sphix-build -b html $(HUB_SRC_DIR) $(HUB_SRC_DIR)/html
 	
 #Various commands to set up repo and dev environment
 init: prettier
@@ -159,23 +157,20 @@ gcov: pip-gcovr
 	#generate the html report
 	gcovr -r . --html -o $(SENSOR_REPORT_DIR)/gcov/index.html
 
-
-
-#TODO
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
+	
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
 
 clean: clean_sensor clean_hub
 
-#TODO
 clean_sensor:
 	#TODO clean out the unnecessary stuff in the test directory
 	rm -rf $(SENSOR_OBJ_DIR)/*
 	rm -rf $(SENSOR_BIN_DIR)/*
 	rm -rf $(SENSOR_REPORT_DIR)
 
-############
+#TODO#####################
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
@@ -197,8 +192,6 @@ pip-pytest: pip
 
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
-
-# testing GitHub connection from terminal to GitHub
 
 # simple makefile tools
 
