@@ -54,12 +54,12 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
 
+###
 .DEAFULT: help
 help:
-	@echo "TODO list targets and what they do here"
 	@echo "make prepare-dev"
-	@echo "	       prepare development environment, use only once"
-	@echo "make test"
+	@echo "	      prepare development environment, use only once"
+	@echo "make test:
 	@echo "       run tests"
 	@echo "make lint"
 	@echo "	      run pylint and mypy"
@@ -67,6 +67,25 @@ help:
 	@echo "	      run project"
 	@echo "make doc"
 	@echo "	      build sphinx documentation"
+
+make prepare-dev:
+	sudo apt-get -y install python3.5 python3-pip
+	python3 -m pip install virtualenv
+	make venv
+	
+make test: venv
+	${PYTHON} -m pytest
+		
+make lint: venv
+
+	${PYTHON} -m pylint
+	${PYTHON} -m mypy 	
+
+make run:
+	${PYTHON} app.py
+
+make doc:
+	sphix-build -b html $(HUB_SRC_DIR) $(HUB_SRC_DIR)/html
 	
 #Various commands to set up repo and dev environment
 init: prettier
