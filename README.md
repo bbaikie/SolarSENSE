@@ -1,6 +1,6 @@
 # SolarSENSE
 ASU SER401 SolarSENSE capstone group for the 2019-2020 school year
-
+PROJECT DESCRIPTION: The 2019-2020 SolarSENSE capstone group was tasked with improving upon the work performed by the 2018-2019 group. What makes are porject different from last years group is that we will be creating an offline hub that will connect to a sensor via wifi and will project tutorial farming videos to third-world country farmers to help them sustain and manage their farms.
 ## Setting Up the Development Environment
 
 ### Install Raspbian
