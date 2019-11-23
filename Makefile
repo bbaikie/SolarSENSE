@@ -29,6 +29,7 @@ VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
+SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
@@ -57,6 +58,12 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 ###
 .DEAFULT: help
 help:
+	@echo "The following targets are available:"
+ 	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
+ 	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
+ 	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
+ 	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
+
 	@echo "make prepare-dev"
 	@echo "	      prepare development environment, use only once"
 	@echo "make test:
@@ -76,11 +83,6 @@ make prepare-dev:
 make test: venv
 	${PYTHON} -m pytest
 		
-make lint: venv
-
-	${PYTHON} -m pylint
-	${PYTHON} -m mypy 	
-
 make run:
 	${PYTHON} app.py
 
@@ -104,6 +106,8 @@ $(SENSOR_BIN_DIR)/%: $(SENSOR_OBJ_DIR)/%.o
 
 flash_sensor:
 	@echo "TODO Depends on having hardware."
+	$(SENSOR_MAKE) flash
+
 
 sensor: $(SENSOR_BIN_FILES)
 
@@ -204,12 +208,12 @@ MAKEINFO = /usr/bin/makeinfo
 info: foo.info
 
 foo.info: foo.texi chap1.texi chap2.texi
-	$(MAKEINFO) $(srcdir)/foo.texi
+	$(MAKEINFO) $(HUB_SRC_DIR)/foo.texi
 
 #Rebuilds the Makefile if any of the configuration files have changes or if
 #Makefile.in has been modified
 
-Makefile : $(srcdir)/Makefile.in
+Makefile : $(HUB_SRC_DIR)/Makefile.in
 	$(SHELL) config.status
 
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
