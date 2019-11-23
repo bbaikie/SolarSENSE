@@ -51,6 +51,7 @@ HUB_SRC_DIR := hub/src
 HUB_TEST_DIR := hub/src/test
 HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
+HUB_DJANGO_DIR := hub/src/django
 
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
@@ -160,8 +161,23 @@ pip-prospector: pip
 pip-pytest: pip
 	pip3 install -U pytest
 
+pip-django: pip
+	pip3 install Django
+
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
+
+# testing GitHub connection from terminal to GitHub 
+
+# simple makefile tools
+
+#Reference https://docs.djangoproject.com/en/2.2/intro/tutorial01/
+django: pip-django
+	mkdir -p $(HUB_DJANGO_DIR)
+	#Unsure if these are needed/how they should be written
+	#django-admin startproject mysite
+	#python manage.py runserver
+	#python manage.py startapp polls
 
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
 pytest: pip-pytest
@@ -175,22 +191,4 @@ setup-server: pip
 	gunicorn -w 4 -b 192.168.2.2:8080 SolarDjango.wsgi:
 
 wifi: 
-	sudo apt install dnsmasq hostapd
-	sudo systemctl stop dnsmasq
-	sudo systemctl stop hostapd
-	sudo cp ~/config/dhcpcd.conf /etc/dhcpcd.conf
-	sudo service dhcpcd restart
-	sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
-	sudo cp ~/config/dnsmasq.conf /etc/dnsmasq.conf
-	sudo service dhcpcd restart
-	sudo systemctl start dnsmasq
-	sudo cp ~/config/hostapd.conf /etc/hostapd/hostapd.conf
-	sudo cp ~/config/hostapd /etc/default/hostapd
-	sudo systemctl unmask hostapd
-	sudo systemctl enable hostapd
-	sudo systemctl start hostapd
-	sudo cp ~/config/sysctl.conf /etc/sysctl.conf
-	sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
-	sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-	sudo cp ~/config/rc.local /etc/rc.local
-	sudo reboot -h now
+	bash config/bash\ scripts/wifi.sh
