@@ -7,5 +7,7 @@ def test(request):
 
 def templateTest(request):
     context = {}
-    template = loader.get_template('testpage/templateTest.html')
+    template = loader.get_template('templateTest.html')
     return HttpResponse(template.render(context, request))
+
+

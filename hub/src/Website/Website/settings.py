@@ -25,7 +25,7 @@ SECRET_KEY = '%^$_u_k)tt69ys&3pnawe8cuulxgbj#f$hvt#^(dupd&)t%r6w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.2']
+ALLOWED_HOSTS = ['192.168.2.2', '192.168.4.1']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'testpage',
+    'SolarSENSE',
 ]
 
 MIDDLEWARE = [

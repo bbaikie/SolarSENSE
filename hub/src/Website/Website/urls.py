@@ -18,5 +18,5 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('testpage/', include('testpage.urls')),
+    path('', include('SolarSENSE.urls')),
 ]
