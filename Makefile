@@ -59,30 +59,11 @@ HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
 .DEAFULT: help
 help:
 	@echo "The following targets are available:"
- 	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
- 	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
- 	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
- 	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
+	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
+	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
+	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
+	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
 
-	@echo "make prepare-dev"
-	@echo "	      prepare development environment, use only once"
-	@echo "make test:
-	@echo "       run tests"
-	@echo "make run"
-	@echo "	      run project"
-
-make prepare-dev:
-	sudo apt-get -y install python3.5 python3-pip
-	python3 -m pip install virtualenv
-	make venv
-	
-make test: venv
-	${PYTHON} -m pytest
-		
-make run:
-	${PYTHON} app.py
-
-	
 #Various commands to set up repo and dev environment
 init: prettier
 	git config core.hooksPath .githooks
@@ -92,18 +73,11 @@ prettier: npm
 
 all: hub sensor
 
-$(SENSOR_OBJ_DIR)/%.o: $(SENSOR_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(SENSOR_BIN_DIR)/%: $(SENSOR_OBJ_DIR)/%.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
 flash_sensor:
-	@echo "TODO Depends on having hardware."
 	$(SENSOR_MAKE) flash
 
-
-sensor: $(SENSOR_BIN_FILES)
+sensor:
+	$(SENSOR_MAKE)
 
 check_sensor: sensor_clang_analyzer sensor_cppcheck gcov
 
@@ -188,12 +162,6 @@ pip-pytest: pip
 
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
-
-#Rebuilds the Makefile if any of the configuration files have changes or if
-#Makefile.in has been modified
-
-Makefile : $(HUB_SRC_DIR)/Makefile.in
-	$(SHELL) config.status
 
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
 pytest: pip-pytest
