@@ -68,12 +68,8 @@ help:
 	@echo "	      prepare development environment, use only once"
 	@echo "make test:
 	@echo "       run tests"
-	@echo "make lint"
-	@echo "	      run pylint and mypy"
 	@echo "make run"
 	@echo "	      run project"
-	@echo "make doc"
-	@echo "	      build sphinx documentation"
 
 make prepare-dev:
 	sudo apt-get -y install python3.5 python3-pip
@@ -192,16 +188,6 @@ pip-pytest: pip
 
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
-
-# simple makefile tools
-
-#Generates info files needed
-MAKEINFO = /usr/bin/makeinfo
-
-info: foo.info
-
-foo.info: foo.texi chap1.texi chap2.texi
-	$(MAKEINFO) $(HUB_SRC_DIR)/foo.texi
 
 #Rebuilds the Makefile if any of the configuration files have changes or if
 #Makefile.in has been modified
