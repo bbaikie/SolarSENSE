@@ -7,21 +7,29 @@
 # Python
 # https://blog.horejsek.com/makefile-with-python/
 # https://krzysztofzuraw.com/blog/2016/makefiles-in-python-projects.html
+# 
+# Makefile basics
+# http://www.math.utah.edu/docs/info/standards_5.html#SEC7
+# https://www.gnu.org/software/texinfo/
+# https://www.gnu.org/software/automake/manual/html_node/Texinfo.html
 
 #C++ setup
 CXX = g++
 PYTHON = python3
+PIP = pip3
+NPM = npm
 #CXXLIBDIR = .
 #CXXFLAGS = -I$(LIBDIR) #C++ compiler flags
 
 #Python setup
 VENV_NAME?=venv
 VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
-PYTHON=${VENV_NAME}/bin/python3
+#PYTHON=${VENV_NAME}/bin/python3
 
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
+SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
@@ -43,24 +51,20 @@ HUB_SRC_DIR := hub/src
 HUB_TEST_DIR := hub/src/test
 HUB_REPORT_DIR := hub/reports
 HUB_PYTEST_DIR := $(HUB_REPORT_DIR)/pytest
+HUB_DJANGO_DIR := hub/src/django
 
 #Specifies that those commands don't create files
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
 
+###
 .DEAFULT: help
 help:
-	@echo "TODO list targets and what they do here"
-	@echo "make prepare-dev"
-	@echo "	       prepare development environment, use only once"
-	@echo "make test"
-	@echo "       run tests"
-	@echo "make lint"
-	@echo "	      run pylint and mypy"
-	@echo "make run"
-	@echo "	      run project"
-	@echo "make doc"
-	@echo "	      build sphinx documentation"
-	
+	@echo "The following targets are available:"
+	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
+	@echo "flash_sensor\t\truns the manufacturer provided makefiles \"flash\" target"
+	@echo "\tTo run other targets from the manufacturer provided makefile, run \"$(SENSOR_MAKE) help\" to see what targets it has, and then run \"$(SENSOR_MAKE) <target>\" to run the desired target."
+	@echo "\n---------------------------------------------\nTODO list targets and what they do here\n---------------------------------------------\n"
+
 #Various commands to set up repo and dev environment
 init: prettier
 	git config core.hooksPath .githooks
@@ -70,16 +74,11 @@ prettier: npm
 
 all: hub sensor
 
-$(SENSOR_OBJ_DIR)/%.o: $(SENSOR_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
-$(SENSOR_BIN_DIR)/%: $(SENSOR_OBJ_DIR)/%.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
 flash_sensor:
-	@echo "TODO Depends on having hardware."
+	$(SENSOR_MAKE) flash
 
-sensor: $(SENSOR_BIN_FILES)
+sensor:
+	$(SENSOR_MAKE)
 
 check_sensor: sensor_clang_analyzer sensor_cppcheck gcov
 
@@ -129,10 +128,9 @@ gcov: pip-gcovr
 	#generate the html report
 	gcovr -r . --html -o $(SENSOR_REPORT_DIR)/gcov/index.html
 
-
-
 hub:
 	@echo "TODO set up hub directory structure, and what commands need to be run to build it and start it"
+	
 	@echo "See the horejsek source in the Makefile for tips on using python in a Makefile"
 
 clean: clean_sensor clean_hub
@@ -143,20 +141,19 @@ clean_sensor:
 	rm -rf $(SENSOR_BIN_DIR)/*
 	rm -rf $(SENSOR_REPORT_DIR)
 
+#TODO#####################
 clean_hub:
 	@echo "TODO, depends what files the hub code generates"
 
 npm:
-	@echo "We should change this to say make sure npm is installed, since it'll be different on mac, windows, and different linux distros"
-	apt install nodejs npm node-semver
+	@if ! $(NPM) --version ; then echo "$(NPM) must be installed! If running on the hub, please run \"make init\", otherwise install $(NPM) on your computer properly" ; fi
 
 #May need to change these depending on how raspberry pi deals with python 2 vs 3. I'm assuming we'll be using 3
 python:
-	@echo "We should change this to say make sure python and pip are installed, since it'll be different on mac, windows, and different linux distros"
-	apt install $(PYTHON) $(PYTHON)-pip virtualenv
+	@if ! $(PYTHON) --version ; then echo "$(PYTHON) must be installed! If running on the hub, please run \"make init\", otherwise install $(PYTHON) on your computer properly" ; fi
 
 pip: python
-	$(PYTHON) -m ensurepip --upgrade
+	@if ! $(PIP) --version ; then echo "$(PIP) must be installed! If running on the hub, please run \"make init\", otherwise install $(PIP) on your computer properly" ; fi
 
 pip-prospector: pip
 	pip3 install prospector
@@ -164,12 +161,23 @@ pip-prospector: pip
 pip-pytest: pip
 	pip3 install -U pytest
 
+pip-django: pip
+	pip3 install Django
+
 prospector: pip-prospector
 	prospector $(HUB_SRC_DIR)
 
 # testing GitHub connection from terminal to GitHub 
 
 # simple makefile tools
+
+#Reference https://docs.djangoproject.com/en/2.2/intro/tutorial01/
+django: pip-django
+	mkdir -p $(HUB_DJANGO_DIR)
+	#Unsure if these are needed/how they should be written
+	#django-admin startproject mysite
+	#python manage.py runserver
+	#python manage.py startapp polls
 
 #Reference for testing, https://docs.pytest.org/en/latest/getting-started.html
 pytest: pip-pytest
@@ -183,22 +191,4 @@ setup-server: pip
 	gunicorn -w 4 -b 192.168.2.2:8080 SolarDjango.wsgi:
 
 wifi: 
-	sudo apt install dnsmasq hostapd
-	sudo systemctl stop dnsmasq
-	sudo systemctl stop hostapd
-	sudo cp ~/config/dhcpcd.conf /etc/dhcpcd.conf
-	sudo service dhcpcd restart
-	sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
-	sudo cp ~/config/dnsmasq.conf /etc/dnsmasq.conf
-	sudo service dhcpcd restart
-	sudo systemctl start dnsmasq
-	sudo cp ~/config/hostapd.conf /etc/hostapd/hostapd.conf
-	sudo cp ~/config/hostapd /etc/default/hostapd
-	sudo systemctl unmask hostapd
-	sudo systemctl enable hostapd
-	sudo systemctl start hostapd
-	sudo cp ~/config/sysctl.conf /etc/sysctl.conf
-	sudo iptables -t nat -A  POSTROUTING -o eth0 -j MASQUERADE
-	sudo sh -c "iptables-save > /etc/iptables.ipv4.nat"
-	sudo cp ~/config/rc.local /etc/rc.local
-	sudo reboot -h now
+	bash config/bash\ scripts/wifi.sh
