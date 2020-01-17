@@ -78,10 +78,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'solarsense',
-	'USER':'dmplotzke',
-	'PASSWORD': '}Zk67c)TEj8~:k]:',
-	'HOST': 'localhost',
-	'PORT': '',
+	'USER': 'admin',
     }
 }
 
