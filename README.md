@@ -68,3 +68,21 @@ To access the internet add a wifi network following [these](https://www.raspberr
 4. Navigate to the base directory of the SolarSENSE repo folder.
 5. Execute the command `$ make init`.
 
+### Install the database
+1. `$ pip3 install psycopg2`
+2. `$ sudo apt-get install libpq-dev postgresql postgresql-contrib`
+3. `$ sudo -u postgres psql`
+4. `create database solarsense;`
+5. `create user admin`
+6. `ALTER ROLE admin SET client_encoding TO 'utf8';`
+7. `ALTER ROLE admin SET default_transaction_isolation TO 'read committed';`
+8. `ALTER ROLE admin SET timezone TO 'UTC';`
+9. `GRANT ALL PRIVILEGES ON DATABASE solarsense TO admin;`
+10. `show hba_file;`
+11. `\q`
+12. Navigate to the directory displayed in the last instruction.
+13. `sudo nano pg_hba.conf`
+14. Change the method to trust for the first three rows in the table at the bottom of the file.
+15. `$ sudo service postgresql restart`
+16. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
+17. run `$ python3 manage.py migrate` which should write some data to the database.
