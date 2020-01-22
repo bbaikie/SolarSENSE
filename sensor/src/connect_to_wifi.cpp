@@ -1,16 +1,8 @@
-#include <iostream>
 #include <WiFi.h>
-using namespace std;
 
-//Example this is based on:
-//https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/examples/WiFiClient/WiFiClient.ino
 void connectToWifi(const char* ssid, const char* password)
 {
-    Serial.begin(115200);
-    delay(10);
-
     // We start by connecting to a WiFi network
-
     Serial.println();
     Serial.println();
     Serial.print("Connecting to ");
@@ -28,7 +20,23 @@ void connectToWifi(const char* ssid, const char* password)
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
 }
-int main() {
-    connectToWifi("ssid", "password");
-    return 0;
+
+void setup() {
+    Serial.begin(115200);
+    delay(5000);
+    Serial.println(WiFi.macAddress());
+
+    //TODO update
+    connectToWifi("Wifi name", "wifi password");
+}
+
+void loop() {
+    Serial.println();
+
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial.print("disconnected");
+    } else {
+        Serial.print("connected");
+    }
+    delay(5000);
 }
