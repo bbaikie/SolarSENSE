@@ -7,17 +7,7 @@ PROJECT DESCRIPTION: The 2019-2020 SolarSENSE capstone group was tasked with imp
 [Download the latest iso of Raspbian Lite](https://www.raspberrypi.org/downloads/raspbian/)
 **or**
 [Follow the installation process for NOOBS](https://www.raspberrypi.org/downloads/noobs/)
-
-### Update Raspbian 
-Ensure you are on Raspbian "Buster"
-    - Check current distro by running command - Run lsb_release -a 
-Updating the raspbian distro to buster from ssh:
-1. sudo nano /etc/apt/sources.list  and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x)
-2. sudo nano /etc/apt/sources.list.d/raspi.list and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x) 
-3. run sudo apt-get update
-4. run sudo apt-get dist-upgrade and restart
     
-
 #### If you chose not to use NOOBS follow one of the methods listed below:
 1. Command Line
     - [Linux](https://www.raspberrypi.org/documentation/installation/installing-images/linux.md)
@@ -70,6 +60,16 @@ Updating the raspbian distro to buster from ssh:
 #### Directly
 If you have a spare screen and keyboard you can directly interact with the raspberry pi.
 To access the internet add a wifi network following [these](https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md) instructions.
+
+#### Update Raspbian 
+Ensure you are on Raspbian "Buster"
+    - Check current distro by running command__
+    Run lsb_release -a __
+Updating the raspbian distro to buster from ssh:
+1. sudo nano /etc/apt/sources.list  and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x)
+2. sudo nano /etc/apt/sources.list.d/raspi.list and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x) 
+3. run sudo apt-get update
+4. run sudo apt-get dist-upgrade and restart
 
 ### Install solarSENSE hub
 1. SSH onto the raspberry pi.
