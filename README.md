@@ -63,9 +63,9 @@ To access the internet add a wifi network following [these](https://www.raspberr
 
 #### Update Raspbian 
 Ensure you are on Raspbian "Buster"
-    - Check current distro by running command__
-    Run lsb_release -a __
-Updating the raspbian distro to buster from ssh:
+    - Check current distro by running command\
+    Run lsb_release -a\
+If current distro is not Buster you can update the raspbian distro using ssh:
 1. sudo nano /etc/apt/sources.list  and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x)
 2. sudo nano /etc/apt/sources.list.d/raspi.list and change instances of  ‘stretch’ to ‘buster’ then save (^o) and exit (^x) 
 3. run sudo apt-get update
