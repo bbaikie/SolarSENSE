@@ -1,4 +1,20 @@
 
 {% extends 'root.html' %}
 
-{% block content %} This is the content I added in {% endblock %}
+{% block content %} 
+This is the content I added in 
+
+<form action="{% url 'SolarSENSE:storeSensorData' %}" method="post">
+    Temperature: <input type="number" name="temperature"> <br>
+    Water: <input type="number" name="water"><br>
+    Phosphate: <input type="number" name="phosphate"><br>
+    Sunshine: <input type="number" name="sunshine"><br>
+    <input type="submit" value="Press Me">
+</form>
+
+{% comment %} {% for temp in sensorData.temperature %}
+{% endfor %} {% endcomment %}
+
+{% endblock %}
+
+
