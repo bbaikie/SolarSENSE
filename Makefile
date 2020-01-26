@@ -187,7 +187,8 @@ pytest: pip-pytest
 setup-server: pip 
 	pip install gunicorn
 	cd ~
-	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .local
+	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .profile
+	echo 'export PYTHONPATH=$PYTHONPATH:/home/pi/SolarSENSE/hub/src/Website' >> .profile
 
 wifi: 
 	bash config/bash\ scripts/wifi.sh

@@ -69,10 +69,9 @@ To access the internet add a wifi network following [these](https://www.raspberr
 5. Execute the command `$ make init`.
 
 ### To start the Website
-1. Navigate to ~/SolarSENSE/hub/src/website
-2. run `$ gunicorn -w 4 -b 192.168.4.1:8080 Website.wsgi`
-3. Connect to the wifi signal NameOfNetwork. The password is AardvarkBadgerHedgehog. You can look in the hostapd.conf file on your pi to change this.
-4. Enter 192.168.4.1:8080 into your address bar for any web browser to see the website.
+1. run `$ gunicorn -w 4 -b 192.168.4.1:8080 Website.wsgi`
+2. Connect to the wifi signal NameOfNetwork. The password is AardvarkBadgerHedgehog. You can look in the hostapd.conf file on your pi to change this.
+3. Enter 192.168.4.1:8080 into your address bar for any web browser to see the website.
 
 ### Install the database
 1. `$ pip3 install psycopg2`
