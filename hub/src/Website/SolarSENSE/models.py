@@ -1,9 +1,10 @@
 from django.db import models
 
-class Videos(models.Model):
+class Video(models.Model):
 
     def __str__(self):
         return self.name
 
-    content = models.FileField(_(""), upload_to="puppy1.jpg", max_length=100)
-)
+    name = models.CharField(max_length=255)
+    content = models.FileField(upload_to='', max_length=100)
+
