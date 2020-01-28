@@ -120,3 +120,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '192.168.2.2:8080'
+MEDIA_ROOT = '/home/pi/media/'

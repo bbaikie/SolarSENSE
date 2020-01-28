@@ -6,7 +6,8 @@ def test(request):
     return HttpResponse('This is a test page')
 
 def templateTest(request):
-    context = {}
+    video = Video.objects.get(id=1)
+    context = {video}
     template = loader.get_template('templateTest.html')
     return HttpResponse(template.render(context, request))
 

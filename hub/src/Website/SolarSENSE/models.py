@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+class Videos(models.Model):
+
+    def __str__(self):
+        return self.name
+
+    content = models.FileField(_(""), upload_to="puppy1.jpg", max_length=100)
+)
