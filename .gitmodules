@@ -1,0 +1,3 @@
+[submodule "sensor/submodules/grpc"]
+	path = sensor/submodules/grpc
+	url = https://github.com/grpc/grpc.git
