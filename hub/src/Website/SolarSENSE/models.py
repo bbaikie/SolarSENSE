@@ -6,5 +6,5 @@ class Video(models.Model):
         return self.name
 
     name = models.CharField(max_length=255)
-    content = models.FileField(upload_to='', max_length=100)
+    content = models.FileField()
 

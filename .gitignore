@@ -66,6 +66,10 @@ share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+static/
+media/
+migrations/
+
 MANIFEST
 
 # PyInstaller
