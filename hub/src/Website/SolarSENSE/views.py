@@ -7,8 +7,12 @@ def test(request):
     return HttpResponse('This is a test page')
 
 def templateTest(request):
-    video = Video.objects.get(name = "test")
-    context = {"video":video}
+    mediaImage = Video.objects.get(name = "testMedia")
+    video = Video.objects.get(name = "testVideo")
+    context = {
+        "video":video,
+        "media":mediaImage
+    }
     return render(request, "templateTest.html", context)
 
 
