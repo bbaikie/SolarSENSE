@@ -2,7 +2,8 @@
 {% extends 'root.html' %}
 
 {% block content %} 
-This is the content I added in 
-<img src="{% static {{ video.content }} %}" alt="Cute Puppy">
-{% comment %} <video src="{{video.content}}"></video> {% endcomment %}
+This is the content I added in
+{% load static %}
+<img src="{% static "puppy1.jpg" %}" alt="Puppy"> 
+{% comment %} <video src="{% static "puppy1.jpg" %}"></video> {% endcomment %}
 {% endblock %}
