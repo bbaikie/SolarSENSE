@@ -8,5 +8,7 @@ This is a static image:
 This is a media image:
 <img src="{{ media.content.url }}" alt="stuff"><br>
 This is a video:
-<video src="{{ video.content.url }}"></video><br>
+<video width="320" height="240" controls>
+    <source src="{% static "BigBuckBunny.mp4" %}" type="video/mp4">
+</video><br>
 {% endblock %}

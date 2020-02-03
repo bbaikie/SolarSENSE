@@ -8,9 +8,7 @@ def test(request):
 
 def templateTest(request):
     mediaImage = Video.objects.get(name = "testMedia")
-    video = Video.objects.get(name = "testVideo")
     context = {
-        "video":video,
         "media":mediaImage
     }
     return render(request, "templateTest.html", context)
