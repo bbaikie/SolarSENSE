@@ -1,4 +1,6 @@
 #include <WiFi.h>
+#include "../submodules/grpc/include/grpc/grpc.h"
+//./sensor/submodules/grpc/include/grpc/grpc.h
 
 void connectToWifi(const char* ssid, const char* password)
 {
