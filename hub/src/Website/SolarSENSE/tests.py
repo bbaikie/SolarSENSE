@@ -1,3 +1,8 @@
 from django.test import TestCase
+from SolarSENSE.models import Video
 
-# Create your tests here.
+
+class TaggsTestCase(TestCase):
+    def setUp(self):
+        )
+
