@@ -1,5 +1,6 @@
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
+    sleep(sleepSeconds);
 }
 
 void sampleAndStoreTemperature(){
