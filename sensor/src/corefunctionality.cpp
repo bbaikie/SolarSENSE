@@ -5,15 +5,19 @@ void activateLowPowerMode(int sleepSeconds){
 
 void sampleAndStoreTemperature(){
     //TODO fill in
+    double temp;
 }
 void sampleAndStoreMoisture(){
     //TODO fill in
+    double moist;
 }
 void sampleAndStorePhosphate(){
     //TODO fill in
+    double phos;
 }
 void sampleAndStoreSunlight(){
     //TODO fill in
+    double sun;
 }
 
 void transmitStoredTemperature(){
@@ -28,3 +32,4 @@ void transmitStoredPhosphate(){
 void transmitStoredSunlight(){
     //TODO fill in
 }
+ 
