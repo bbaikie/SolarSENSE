@@ -2,13 +2,13 @@
 {% extends 'root.html' %}
 
 {% block content %} 
-{% load static %}
-This is a static image:
-<img src="{% static "puppy1.jpg" %}" alt="Puppy"><br>
-This is a media image:
-<img src="{{ media.content.url }}" alt="stuff"><br>
-This is a video:
-<video width="320" height="240" controls>
-    <source src="{% static "BigBuckBunny.mp4" %}" type="video/mp4">
-</video><br>
+    {% load static %}
+    This is a static image:
+    <img src="{% static "puppy1.jpg" %}" alt="Puppy"><br>
+    This is a media image:
+    <img src="{{ media.content.url }}" alt="stuff"><br>
+    This is a video:
+    <video width="320" height="240" controls>
+        <source src="{% static "BigBuckBunny.mp4" %}" type="video/mp4">
+    </video><br>
 {% endblock %}

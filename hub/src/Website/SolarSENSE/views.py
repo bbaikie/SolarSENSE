@@ -13,4 +13,18 @@ def templateTest(request):
     }
     return render(request, "templateTest.html", context)
 
+def tagTest(request):
+    context = {}
+    return render(request, "templateTest.html", context)
 
+def showTags(request):
+    temperature = request.GET['temperature']
+    water = request.GET['water']
+    phosphate = request.GET['phosphate']
+    sunlight = request.GET['sunlight']
+
+    
+
+    context = {
+    }
+    return HttpResponse("This will show the tags")

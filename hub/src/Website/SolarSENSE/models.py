@@ -8,10 +8,6 @@ class CustomTag(TagBase):
     min = models.DecimalField(max_digits=5, decimal_places=2)
     max = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __init__ (self, *args, **kwrgs):
-        super(CustomTag, self).__init__(*args, **kwargs)
-        self.name = str(min) + " --> " + str(max)
-
     class Meta:
         verbose_name = _("Tag")
         verbose_name_plural = _("Tags")
