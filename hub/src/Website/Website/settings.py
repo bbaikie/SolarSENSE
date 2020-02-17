@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'SolarSENSE',
     'taggit',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
