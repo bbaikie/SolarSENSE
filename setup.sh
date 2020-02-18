@@ -15,9 +15,9 @@ echo "Installing necessary packages"
 
 sudo apt-get install -y hostapd dnsmasq nginx python3 python3-dev python3-pip build-essential mongodb-server git bluetooth bluez
 
-sudo pip3 install flask uwsgi flask_wtf pymongo flask_jsonpify flask-cors numpy
+sudo pip3 install flask uwsgi flask_wtf pymongo flask_jsonpify flask-cors numpy json-rpc
 
-python3 -m pip install pymongo==3.9.0
+#python3 -m pip install pymongo==3.9.0
 #look into later, might deal with soil data manipulation
 git clone https://github.com/ThomDietrich/miflora-mqtt-daemon.git /opt/miflora-mqtt-daemon
 
@@ -31,20 +31,20 @@ echo "-----Finished with Webserver Setup-----"
 
 
 
-echo "-----Starting Mongo Setup-----"
+#echo "-----Starting Mongo Setup-----"
 
-echo "Setting up MongoDB"
+#echo "Setting up MongoDB"
 
 #Setup MongoDB as a service
 #Might want to change structure of file setup?
 
-sudo mkdir -p /data/db/
+#sudo mkdir -p /data/db/
 
-sudo chown -R `id -un` /data/db/
+#sudo chown -R `id -un` /data/db/
 
-sudo service mongodb start
+#sudo service mongodb start
 
-echo "-----Finished with Mongo Setup-----"
+#echo "-----Finished with Mongo Setup-----"
 
 
 
@@ -52,7 +52,7 @@ echo "-----Starting Databases Setup-----"
 
 echo "Destroying All Databases if they exist"
 
-mongo solarsensereports --eval 'db.dropDatabase()'
+#mongo solarsensereports --eval 'db.dropDatabase()'
 
 #mongo Constraint --eval 'db.dropDatabase()'
 

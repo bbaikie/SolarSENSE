@@ -1,3 +1,4 @@
+#include <WiFi.h>
 /**
  * corefunctionality.h
  *
@@ -84,3 +85,9 @@ void transmitStoredPhosphate();
  * has stored to the hub
  */
 void transmitStoredSunlight();
+
+void turnOffWiFi();
+
+void turnOnWifi();
+
+void connectToWifi(const char* ssid, const char* password);
