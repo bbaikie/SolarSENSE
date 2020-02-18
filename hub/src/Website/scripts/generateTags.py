@@ -16,8 +16,10 @@ def run():
 
     # Temperature
     for x in range(tempTagNum):
-        min = random.uniform(0, 100)
-        max = random.uniform(0, 100)
+        min = random.uniform(0, 98)
+        min = round(min, 2)
+        max = random.uniform(min + 1, 100)
+        max = round(max, 2)
         num = random.randrange(0, vidNum)
 
         t = CustomTag.objects.create(min=min ,max=max , name=str(min) + " <-> " + str(max), type="temperature")
@@ -26,8 +28,10 @@ def run():
 
     # Sunlight
     for x in range(sunTagNum):
-        min = random.uniform(0, 100)
-        max = random.uniform(0, 100)
+        min = random.uniform(0, 98)
+        min = round(min, 2)
+        max = random.uniform(min + 1, 100)
+        max = round(max, 2)
         num = random.randrange(0, vidNum)
 
         CustomTag.objects.create(min=min ,max=max , name=str(min) + " <-> " + str(max), type="sunlight")
@@ -36,8 +40,10 @@ def run():
 
     # Water
     for x in range(waterTagNum):
-        min = random.uniform(0, 100)
-        max = random.uniform(0, 100)
+        min = random.uniform(0, 98)
+        min = round(min, 2)
+        max = random.uniform(min + 1, 100)
+        max = round(max, 2)
         num = random.randrange(0, vidNum)
 
         t = CustomTag.objects.create(min=min ,max=max , name=str(min) + " <-> " + str(max), type="water")
@@ -46,8 +52,10 @@ def run():
 
     # Phosphate
     for x in range(phosTagNum):
-        min = random.uniform(0, 100)
-        max = random.uniform(0, 100)
+        min = random.uniform(0, 98)
+        min = round(min, 2)
+        max = random.uniform(min + 1, 100)
+        max = round(max, 2)
         num = random.randrange(0, vidNum)
 
         t = CustomTag.objects.create(min=min ,max=max , name=str(min) + " <-> " + str(max), type="phosphate")
