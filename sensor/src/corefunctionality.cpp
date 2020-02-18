@@ -1,6 +1,12 @@
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
+    
+    //put sensor to sleep
     sleep(sleepSeconds);
+    
+    //turn off wifi (figure out how to call turnOffWiFi from turn_Off_WiFi.cpp)
+    turnOffWiFi();
+
 }
 
 void sampleAndStoreTemperature(){
