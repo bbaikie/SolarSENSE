@@ -23,10 +23,10 @@ def showTags(request):
     phosphate = request.GET["phosphate"]
     sunlight = request.GET["sunlight"]
 
-    videos = Video.objects.filter(tags__type__exact="temperature", tags__min__lte=temp, tags__max__gte=temp) |
-    Video.objects.filter(tags__type__exact="water", tags__min__lte=water, tags__max__gte=water) |
-    Video.objects.filter(tags_type_exact="phosphate", tags__min_lte=phosphate, tags__max_gte=phosphate) |
-    Video.objects.filter(tags_type_exact="sunlight", tags_min_lte=sunlight, tags_max_gte=sunlight)
+    videos = Video.objects.filter(tags__type__exact="temperature", tags__min__lte=temp, tags__max__gte=temp).distinct() |
+    Video.objects.filter(tags__type__exact="water", tags__min__lte=water, tags__max__gte=water).distinct() |
+    Video.objects.filter(tags__type__exact="phosphate", tags__min__lte=phosphate, tags__max__gte=phosphate).distinct() |
+    Video.objects.filter(tags__type__exact="sunlight", tags__min__lte=sunlight, tags__max__gte=sunlight).distinct()
     context = {
         videos : "videos"
     }
