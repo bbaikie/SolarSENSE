@@ -57,7 +57,7 @@ HUB_DJANGO_DIR := hub/src/django
 .PHONY: clean clean_hub clean_sensor all sensor hub help flash_sensor sensor_cppcheck sensor_cppcheck_no_report sensor_clang_analyzer check_sensor eslint prospector pip pip-prospector python npm cpplint pip-cpplint gcov init prettier pip-gcovr
 
 ###
-.DEAFULT: help
+.DEFAULT: help
 help:
 	@echo "The following targets are available:"
 	@echo "sensor\t\t\truns the manufacturer provided makefiles \"all\" target"
@@ -71,6 +71,10 @@ init: prettier
 
 prettier: npm
 	npm install --save-dev --save-exact prettier
+
+#NPM update
+npmupdate: 
+	npm install npm@latest -g
 
 all: hub sensor
 
