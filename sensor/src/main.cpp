@@ -6,10 +6,24 @@ void setup() {
 }
 
 void loop() {
-    sampleAndStoreTemperature();
-    sampleAndStoreMoisture();
-    sampleAndStorePhosphate();
-    sampleAndStoreSunlight();
+
+//list for temperature
+list<double> tlist;
+
+//list for moisture
+list<double> mlist;
+
+//list for phosphate
+list<double> plist;
+
+//list for sunlight
+list<double> slist;
+
+//sending four list to perspective sampel and store functions
+    sampleAndStoreTemperature(tlist);
+    sampleAndStoreMoisture(mlist);
+    sampleAndStorePhosphate(plist);
+    sampleAndStoreSunlight(slist);
 
     //TODO put in correct wifi info
     connectToWifi("Wifi name", "wifi password");
