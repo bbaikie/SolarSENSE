@@ -1,4 +1,10 @@
 {% extends 'root.html' %}
 {% block content %}
-Bob Ross
+
+{% for video in videos %}
+    <h1> {{ video.name }} </h1>
+    {% for tag in video.tags.names() %}
+        <ul> {{tag}} </ul>
+    {% endfor %}
+{% endfor %}
 {% endblock content %}
