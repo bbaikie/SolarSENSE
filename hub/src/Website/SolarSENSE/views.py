@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from SolarSENSE.models import Video
+from django.db.models import Case, CharField, Value, When, Count
 
 def test(request):
     return HttpResponse('This is a test page')
@@ -22,6 +23,33 @@ def showTags(request):
     water = request.GET["water"]
     phosphate = request.GET["phosphate"]
     sunlight = request.GET["sunlight"]
+
+    validVideos = {}
+
+    if(water != null):
+        totalSet = Video.objects.annotate(valid=Case(When(tags__type="water", then=(Case(When(tags__min__lte=water, tags__max__gte=water, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+        possibleSet = totalSet.filter(valid="True").distinct()
+        for x in possibleSet:
+            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="water").count()
+
+    if(temp != null):
+        totalSet = Video.objects.annotate(valid=Case(When(tags__type="temperature", then=(Case(When(tags__min__lte=temp, tags__max__gte=temp, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+        possibleSet = totalSet.filter(valid="True").distinct()
+        for x in possibleSet:
+            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="temperature").count()
+
+    if(phosphate != null):
+        totalSet = Video.objects.annotate(valid=Case(When(tags__type="phosphate", then=(Case(When(tags__min__lte=phosphate, tags__max__gte=phosphate, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+        possibleSet = totalSet.filter(valid="True").distinct()
+        for x in possibleSet:
+            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="phosphate").count()
+
+    if(phosphate != null):
+        totalSet = Video.objects.annotate(valid=Case(When(tags__type="sunlight", then=(Case(When(tags__min__lte=sunlight, tags__max__gte=sunlight, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+        possibleSet = totalSet.filter(valid="True").distinct()
+        for x in possibleSet:
+            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="sunlight").count()
+
 
     context = {
         videos : "videos"
