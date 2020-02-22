@@ -64,8 +64,13 @@ def showTags(request):
             trueVideos.append(x)
     
     videos = Video.objects.filter(name__in=trueVideos)
+    names = []
+
+    for x in videos:
+        names.append(x.tags.names())
 
     context = {
-        videos : "videos"
+        names : "names"
     }
+    
     return render(request, "tagResult.html", context)

@@ -1,10 +1,6 @@
 {% extends 'root.html' %}
 {% block content %}
-
-{% for video in videos %}
-    <h1> {{ video.name }} </h1>
-    {% for tag in video.tags.names() %}
-        <ul> {{tag}} </ul>
-    {% endfor %}
+{% for name in names %}
+    <ul> {{ name }} </ul>
 {% endfor %}
 {% endblock content %}
