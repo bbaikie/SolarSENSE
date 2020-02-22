@@ -91,3 +91,9 @@ To access the internet add a wifi network following [these](https://www.raspberr
 15. `$ sudo service postgresql restart`
 16. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
 17. run `$ python3 manage.py migrate` which should write some data to the database.
+
+### Set up JSON-RPC for C++
+This is only necessary for developing for the ESP32 sensor processor board, and should be done on whichever computer is being used for programming, not the hub Raspberry Pi (unless the hub Raspberry Pi is the computer being used to develop for the ESP32).
+1. Navigate to the [json-rpc-cpp repository](https://github.com/cinemast/libjson-rpc-cpp#install-the-framework)
+2. Follow the instructions for how to install the framework for whichever platform you're developing on.
+3. Once the JSON-RPC libraries are installed, the sensor code will be able to be compiled
