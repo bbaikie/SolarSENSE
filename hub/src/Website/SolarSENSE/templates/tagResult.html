@@ -1,0 +1,13 @@
+{% extends 'root.html' %}
+{% block content %}
+{% for video in videos %}
+    <div border="5px solid black">
+        <h1> {{video.name}} </h1>
+        {% for tags in nameSet %}
+            {% for tag in tags %}
+                <ul> {{ tag }} </ul>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endfor %}
+{% endblock content %}
