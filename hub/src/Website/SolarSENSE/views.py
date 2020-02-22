@@ -26,30 +26,37 @@ def showTags(request):
 
     validVideos = {}
 
-    if(water != null):
-        totalSet = Video.objects.annotate(valid=Case(When(tags__type="water", then=(Case(When(tags__min__lte=water, tags__max__gte=water, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-        possibleSet = totalSet.filter(valid="True").distinct()
-        for x in possibleSet:
-            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="water").count()
+    
+    totalSet = Video.objects.annotate(valid=Case(When(tags__type="water", then=(Case(When(tags__min__lte=water, tags__max__gte=water, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+    possibleSet = totalSet.filter(valid="True").distinct()
+    for x in possibleSet:
+        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="water").count()
 
-    if(temp != null):
-        totalSet = Video.objects.annotate(valid=Case(When(tags__type="temperature", then=(Case(When(tags__min__lte=temp, tags__max__gte=temp, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-        possibleSet = totalSet.filter(valid="True").distinct()
-        for x in possibleSet:
-            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="temperature").count()
+    
+    totalSet = Video.objects.annotate(valid=Case(When(tags__type="temperature", then=(Case(When(tags__min__lte=temp, tags__max__gte=temp, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+    possibleSet = totalSet.filter(valid="True").distinct()
+    for x in possibleSet:
+        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="temperature").count()
 
-    if(phosphate != null):
-        totalSet = Video.objects.annotate(valid=Case(When(tags__type="phosphate", then=(Case(When(tags__min__lte=phosphate, tags__max__gte=phosphate, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-        possibleSet = totalSet.filter(valid="True").distinct()
-        for x in possibleSet:
-            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="phosphate").count()
+    
+    totalSet = Video.objects.annotate(valid=Case(When(tags__type="phosphate", then=(Case(When(tags__min__lte=phosphate, tags__max__gte=phosphate, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+    possibleSet = totalSet.filter(valid="True").distinct()
+    for x in possibleSet:
+        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="phosphate").count()
 
-    if(phosphate != null):
-        totalSet = Video.objects.annotate(valid=Case(When(tags__type="sunlight", then=(Case(When(tags__min__lte=sunlight, tags__max__gte=sunlight, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-        possibleSet = totalSet.filter(valid="True").distinct()
-        for x in possibleSet:
-            validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="sunlight").count()
+    
+    totalSet = Video.objects.annotate(valid=Case(When(tags__type="sunlight", then=(Case(When(tags__min__lte=sunlight, tags__max__gte=sunlight, then=Value("True"))))), default=Value("False"), output_field=CharField()))
+    possibleSet = totalSet.filter(valid="True").distinct()
+    for x in possibleSet:
+        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="sunlight").count()
 
+    trueVideos = []
+    
+    for x in validVideos.keys():
+        if validVideos[x] == True:
+            trueVideos.append(x)
+    
+    videos = Video.objects.filter(name__in=trueVideos)
 
     context = {
         videos : "videos"

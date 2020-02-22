@@ -1,8 +1,10 @@
 {% extends 'root.html' %}
 {% block content %}
-    {% for video in videos %}
-        <h3> {{ video.name }} </h3>
-        <ul>
+    {% for names in videos %}
+        <ul width="500px">
+            {% for name in names %}
+            <li display="inline-block"> {{ name }} </li>
+            {% endfor %}
         </ul>
     {% endfor %}
 {% endblock content %}
