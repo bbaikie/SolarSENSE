@@ -34,7 +34,7 @@ def run():
         max = round(max, 2)
         num = random.randrange(0, vidNum)
 
-        CustomTag.objects.create(min=min ,max=max ,name= "Sun: " + str(min) + " <-> " + str(max), type="sunlight")
+        t = CustomTag.objects.create(min=min ,max=max ,name= "Sun: " + str(min) + " <-> " + str(max), type="sunlight")
         v = Video.objects.get(name="Test" + str(num))
         v.tags.add(t)
 
