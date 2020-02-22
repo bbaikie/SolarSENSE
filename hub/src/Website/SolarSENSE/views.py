@@ -19,10 +19,17 @@ def tagTest(request):
     return render(request, "tagTest.html", context)
 
 def showTags(request):
-    temp = request.GET["temperature"]
-    water = request.GET["water"]
-    phosphate = request.GET["phosphate"]
-    sunlight = request.GET["sunlight"]
+    temp = 0
+    water = 0
+    sunlight = 0
+    phosphate = 0
+    try:
+        temp = request.POST["temperature"]
+        water = request.POST["water"]
+        sunlight = request.POST["sunlight"]
+        phosphate = request.POST["phosphate"]
+    except (KeyError):
+        HttpResponse("The value was invalid")
 
     validVideos = {}
 

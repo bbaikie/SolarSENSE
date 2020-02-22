@@ -2,7 +2,8 @@
 {% extends 'root.html' %}
 
 {% block content %}
-<form action="{% url 'showTags' %}" method="get">
+<form action="{% url 'showTags' %}" method="post">
+    {% csrf_token %}
     <label for="temperature"> Temperature </label>
     <input type="number" name="temperature" id="temperature"><br>
     <label for="sunlight"> Sunlight </label>
