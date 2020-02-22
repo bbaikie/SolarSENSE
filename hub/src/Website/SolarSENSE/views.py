@@ -70,7 +70,8 @@ def showTags(request):
         names.append(x.tags.names())
 
     context = {
-        names : "names"
+        "videos":videos,
+        "nameSet":tuple(names)
     }
     
     return render(request, "tagResult.html", context)
