@@ -81,7 +81,12 @@ To access the internet add a wifi network following [these](https://www.raspberr
 5. `$ sudo systemctl start gunicorn.socket`
 6. `$ sudo systemctl enable gunicorn.socket`
 7. `$ curl --unix-socket /run/gunicorn.sock 192.168.4.1` should return This is a test.
-8. Connect a device to the hub wifi network and enter 192.168.4.1/staticTest into a browser.
+8. Enter 192.168.4.1/admin into a browser.
+9. `$ python3 manage.py createsuperuser` from the directory containing manage.py in your github repo.
+10. Connect a device to the hub wifi network.
+11. Enter 192.168.4.1/admin into a browser.
+12. Login and add a video object under the name mediaImage. Note that an image should be uploaded when prompted.
+13. Connect a device to the hub wifi network and enter 192.168.4.1/staticTest into a browser. Two images and one video should display.
 
 #### Troubleshooting
 * Nginx Process Logs: sudo journalctl -u nginx
