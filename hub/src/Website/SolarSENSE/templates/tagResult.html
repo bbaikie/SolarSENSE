@@ -3,11 +3,11 @@
 {% for video in videos %}
     <div border="5px solid black">
         <h1> {{video.name}} </h1>
-        {% for tags in nameSet %}
-            {% for tag in tags %}
-                <ul> {{ tag }} </ul>
+        <ul>
+            {% for tag in nameSet[forloop.counter] %}
+                <li> {{ tag }} </li>
             {% endfor %}
-        {% endfor %}
+        </ul>
     </div>
 {% endfor %}
 {% endblock content %}
