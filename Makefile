@@ -189,7 +189,7 @@ pytest: pip-pytest
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
   
 setup-server: pip 
-	pip install gunicorn
+	sudo apt-get install gunicorn3
 	cd ~
 	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .profile
 	echo 'export PYTHONPATH=$PYTHONPATH:/home/pi/SolarSENSE/hub/src/Website' >> .profile

@@ -68,11 +68,6 @@ To access the internet add a wifi network following [these](https://www.raspberr
 4. Navigate to the base directory of the SolarSENSE repo folder.
 5. Execute the command `$ make init`.
 
-### To start the Website
-1. run `$ gunicorn -w 4 -b 192.168.4.1:8080 Website.wsgi`
-2. Connect to the wifi signal NameOfNetwork. The password is AardvarkBadgerHedgehog. You can look in the hostapd.conf file on your pi to change this.
-3. Enter 192.168.4.1:8080 into your address bar for any web browser to see the website.
-
 ### Setting up Nginx
 1. Navigate to the config directory inside the the root of your SolarSENSE repo
 2. `$ sudo mv nginx.conf /etc/nginx/`
@@ -83,7 +78,7 @@ To access the internet add a wifi network following [these](https://www.raspberr
 7. `$ curl --unix-socket /run/gunicorn.sock 192.168.4.1` should return This is a test.
 8. Enter 192.168.4.1/admin into a browser.
 9. `$ python3 manage.py createsuperuser` from the directory containing manage.py in your github repo.
-10. Connect a device to the hub wifi network.
+10. Connect a device to the hub wifi network. You can check the hostapd.conf file at /etc/hostapd/ for more info.
 11. Enter 192.168.4.1/admin into a browser.
 12. Login and add a video object under the name mediaImage. Note that an image should be uploaded when prompted.
 13. Connect a device to the hub wifi network and enter 192.168.4.1/staticTest into a browser. Two images and one video should display.
@@ -100,7 +95,7 @@ To access the internet add a wifi network following [these](https://www.raspberr
 2. `$ sudo apt-get install libpq-dev postgresql postgresql-contrib`
 3. `$ sudo -u postgres psql`
 4. `create database solarsense;`
-5. `create user admin`
+5. `create user admin;`
 6. `ALTER ROLE admin SET client_encoding TO 'utf8';`
 7. `ALTER ROLE admin SET default_transaction_isolation TO 'read committed';`
 8. `ALTER ROLE admin SET timezone TO 'UTC';`
@@ -113,6 +108,11 @@ To access the internet add a wifi network following [these](https://www.raspberr
 15. `$ sudo service postgresql restart`
 16. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
 17. run `$ python3 manage.py migrate` which should write some data to the database.
+
+### Install Django packages
+1. `$ pip3 install django-taggit`
+2. `$ pip3 install django-extensions`
+3. `$ python3 manage.py makemigration SolarSENSE`
 
 ### Set up JSON-RPC for C++
 This is only necessary for developing for the ESP32 sensor processor board, and should be done on whichever computer is being used for programming, not the hub Raspberry Pi (unless the hub Raspberry Pi is the computer being used to develop for the ESP32).
