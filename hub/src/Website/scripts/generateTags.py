@@ -4,11 +4,11 @@ import random
 
 def run():
 
-    vidNum = 5
-    tempTagNum = 5
-    sunTagNum = 5
-    waterTagNum = 5
-    phosTagNum = 5
+    vidNum = 15
+    tempTagNum = 15
+    sunTagNum = 15
+    waterTagNum = 15
+    phosTagNum = 15
 
     # Videos
     for x in range(vidNum):

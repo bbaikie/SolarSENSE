@@ -73,6 +73,28 @@ To access the internet add a wifi network following [these](https://www.raspberr
 2. Connect to the wifi signal NameOfNetwork. The password is AardvarkBadgerHedgehog. You can look in the hostapd.conf file on your pi to change this.
 3. Enter 192.168.4.1:8080 into your address bar for any web browser to see the website.
 
+### Setting up Nginx
+1. Navigate to the config directory inside the the root of your SolarSENSE repo
+2. `$ sudo mv nginx.conf /etc/nginx/`
+3. `$ sudo mv gunicorn.service /etc/systemd/system/`
+4. `$ sudo mv gunicorn.socket /etc/systemd/system/`
+5. `$ sudo systemctl start gunicorn.socket`
+6. `$ sudo systemctl enable gunicorn.socket`
+7. `$ curl --unix-socket /run/gunicorn.sock 192.168.4.1` should return This is a test.
+8. Enter 192.168.4.1/admin into a browser.
+9. `$ python3 manage.py createsuperuser` from the directory containing manage.py in your github repo.
+10. Connect a device to the hub wifi network.
+11. Enter 192.168.4.1/admin into a browser.
+12. Login and add a video object under the name mediaImage. Note that an image should be uploaded when prompted.
+13. Connect a device to the hub wifi network and enter 192.168.4.1/staticTest into a browser. Two images and one video should display.
+
+#### Troubleshooting
+* Nginx Process Logs: sudo journalctl -u nginx
+* Nginx Access Logs: sudo less /var/log/nginx/access.log
+* Nginx Error Logs: sudo less /var/log/nginx/error.log
+* Gunicorn Application Log: sudo journalctl -u gunicorn
+* Gunicorn Socket Log: sudo journalctl -u gunicorn.socket
+
 ### Install the database
 1. `$ pip3 install psycopg2`
 2. `$ sudo apt-get install libpq-dev postgresql postgresql-contrib`
@@ -97,3 +119,4 @@ This is only necessary for developing for the ESP32 sensor processor board, and 
 1. Navigate to the [json-rpc-cpp repository](https://github.com/cinemast/libjson-rpc-cpp#install-the-framework)
 2. Follow the instructions for how to install the framework for whichever platform you're developing on.
 3. Once the JSON-RPC libraries are installed, the sensor code will be able to be compiled
+

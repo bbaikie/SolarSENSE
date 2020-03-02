@@ -31,41 +31,23 @@ def showTags(request):
     except (KeyError):
         HttpResponse("The value was invalid")
 
-    validVideos = {}
+    allVideos = Video.objects.all()
 
-    
-    totalSet = Video.objects.annotate(valid=Case(When(tags__type="water", then=(Case(When(tags__min__lte=water, tags__max__gte=water, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-    possibleSet = totalSet.filter(valid="True").distinct()
-    for x in possibleSet:
-        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="water").count()
+    waterSet = allVideos.filter(tags__type="water", tags__min__lte=water, tags__max__gte=water)
+    waterSet = allVideos.difference(allVideos.filter(tags__type="water")).union(waterSet)
 
-    
-    totalSet = Video.objects.annotate(valid=Case(When(tags__type="temperature", then=(Case(When(tags__min__lte=temp, tags__max__gte=temp, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-    possibleSet = totalSet.filter(valid="True").distinct()
-    for x in possibleSet:
-        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="temperature").count()
+    tempSet = allVideos.filter(tags__type="temperature", tags__min__lte=temp, tags__max__gte=temp)
+    tempSet = allVideos.difference(allVideos.filter(tags__type="temperature")).union(tempSet)
 
-    
-    totalSet = Video.objects.annotate(valid=Case(When(tags__type="phosphate", then=(Case(When(tags__min__lte=phosphate, tags__max__gte=phosphate, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-    possibleSet = totalSet.filter(valid="True").distinct()
-    for x in possibleSet:
-        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="phosphate").count()
+    sunSet = allVideos.filter(tags__type="sunlight", tags__min__lte=sunlight, tags__max__gte=sunlight)
+    sunSet = allVideos.difference(allVideos.filter(tags__type="sunlight")).union(sunSet)
 
-    
-    totalSet = Video.objects.annotate(valid=Case(When(tags__type="sunlight", then=(Case(When(tags__min__lte=sunlight, tags__max__gte=sunlight, then=Value("True"))))), default=Value("False"), output_field=CharField()))
-    possibleSet = totalSet.filter(valid="True").distinct()
-    for x in possibleSet:
-        validVideos[x.name] = totalSet.filter(name=x.name, valid="True").count() == x.tags.filter(type="sunlight").count()
+    phosSet = allVideos.filter(tags__type="phosphate", tags__min__lte=phosphate, tags__max__gte=phosphate)
+    phosSet = allVideos.difference(allVideos.filter(tags__type="phosphate")).union(phosSet)
 
-    trueVideos = []
+    videos = waterSet.intersection(tempSet, phosSet, sunSet)
     
-    for x in validVideos.keys():
-        if validVideos[x] == True:
-            trueVideos.append(x)
-    
-    videos = Video.objects.filter(name__in=trueVideos)
     names = []
-
     for x in videos:
         names.append(x.tags.names())
 
