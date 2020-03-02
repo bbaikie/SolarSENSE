@@ -27,11 +27,12 @@ void sampleAndStoreTemperature(list *list){
 //then adds the Moisture variable to end of list 
 void sampleAndStoreMoisture(list *list){
     
-    double moist; 
+    double moist = analogRead(0);
     for(int i = 1; i<= list.size();i++){
     list.emplace_back(i); 
     }
     Atten >> 0x2;
+    
 }
 
 //function that takes a pointer to a list                       
