@@ -6,17 +6,25 @@ from jsonrpcserver import method, serve
 def main():
 
 # List of methods to grab all 4 points of data
-@method
-def storeTemp(temp):
-    return bool
+@jsonrpc_method('myapp.setData')
+def storeTemp(request, temperature):
+    #database.add(temperature)
+    return temperature
 
-@method
-def storeMoisture(moisture):
-    return bool
+@jsonrpc_method('myapp.setData')
+def storeMoisture(request, moisture):
+    #database.add(moisture)
+    return moisture
 
-@method
-def storePhosphorus(phosphorus):
-    return bool
+@jsonrpc_method('myapp.setData')
+def storePhosphorus(request, phosphorus):
+    #database.add(phosphorus)
+    return phosphorus
+
+@jsonrpc_method('myapp.setData')
+def storeSunlight(request, sunlight):
+    #database.add(sunlight)
+    return sunlight
 
 @method
 def storeSunlight(sunlight):
