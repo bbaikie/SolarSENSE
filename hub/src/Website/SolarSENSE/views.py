@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from SolarSENSE.models import Video
 from django.db.models import Case, CharField, Value, When, Count
+from jsonrpc import jsonrpc_method
 
 def test(request):
     return HttpResponse('This is a test page')
