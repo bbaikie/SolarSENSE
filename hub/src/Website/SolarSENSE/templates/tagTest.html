@@ -1,16 +1,6 @@
 {% extends 'root.html' %}
 {% load static %}
 
-{% block head %}
-
-    <link rel="stylesheet" type="text/css" href="{% static bootstrap.min.css %}">
-    <script src="{% static bootstrap.min.js %}"></script>
-
-{% endblock head %}
-
-
-
-
 {% block content %}
 <form action="{% url 'showTags' %}" method="post" class="container border">
     {% csrf_token %}
