@@ -1,9 +1,9 @@
 
 {% extends 'root.html' %}
+{% load static %}
 
 {% block content %} 
-    {% load static %}
-    <div class="container text-white">
+    <div class="container text-danger">
         This is a static image:
         <img src="{% static "puppy1.jpg" %}" alt="Puppy"><br>
     </div>
