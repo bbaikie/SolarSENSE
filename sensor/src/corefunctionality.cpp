@@ -31,6 +31,7 @@ void sampleAndStoreMoisture(list *list){
     for(int i = 1; i<= list.size();i++){
     list.emplace_back(i); 
     }
+    Serial.print(moist);
     Atten >> 0x2;
     
 }
