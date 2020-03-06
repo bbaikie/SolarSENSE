@@ -2,28 +2,22 @@
 #include "corefunctionality.h"
 
 void setup() {
-    //TODO make sure there's no set up stuff we need to do
+    Serial.begin(115200);
+    delay(1000);
+    //TODO figure out what setup stuff we need to do
 }
 
 void loop() {
+    sampleAndStoreTemperature();
+}
 
-//list for temperature
-list<double> tlist;
-
-//list for moisture
-list<double> mlist;
-
-//list for phosphate
-list<double> plist;
-
-//list for sunlight
-list<double> slist;
-
-//sending four list to perspective sampel and store functions
-    sampleAndStoreTemperature(tlist);
-    sampleAndStoreMoisture(mlist);
-    sampleAndStorePhosphate(plist);
-    sampleAndStoreSunlight(slist);
+/*
+void loop() {
+    //sending four list to perspective sampel and store functions
+    sampleAndStoreTemperature();
+    sampleAndStoreMoisture();
+    sampleAndStorePhosphate();
+    sampleAndStoreSunlight();
 
     //TODO put in correct wifi info
     connectToWifi("Wifi name", "wifi password");
@@ -44,3 +38,4 @@ list<double> slist;
     //TODO find better low power mode time
     activateLowPowerMode(600);
 }
+*/

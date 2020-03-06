@@ -4,23 +4,19 @@
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
     
-    //put sensor to sleep
-    sleep(sleepSeconds);
-    
     //turn off wifi (figure out how to call turnOffWiFi from turn_Off_WiFi.cpp)
     turnOffWiFi();
 
+    //put sensor to sleep
+    //TODO we should research if this is the best way to put the sensor to sleep
+    sleep(sleepSeconds);
 }
 
-//function that takes a pointer to a list
-//then adds the temp variable to end of list 
-void sampleAndStoreTemperature(list *list){
-    
-    double temp;
-    for(int i = 1; i<= list.size();i++){
-    list.emplace_back(i);
-    }
-    
+void sampleAndStoreTemperature(){
+    //pin A1 uses ADC2
+    //Pin A1 is also gpio #25
+    int adc_value = analogRead(25);
+    Serial.println(adc_value);
 }
 
 //function that takes a pointer to a list                       
