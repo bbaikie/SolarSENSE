@@ -120,3 +120,10 @@ This is only necessary for developing for the ESP32 sensor processor board, and 
 2. Follow the instructions for how to install the framework for whichever platform you're developing on.
 3. Once the JSON-RPC libraries are installed, the sensor code will be able to be compiled
 
+### Set up JSON-RPC for Django 
+Necessary for developing on hub (Raspberry Pi)
+1. Navigate to the [django-json-rpc repository](https://github.com/samuraisam/django-json-rpc)
+2. Follow the instructions to add JSON-RPC under "1.Install django-json-rpc" or git clone git://github.com/samuraisam/django-json-rpc.git
+cd django-json-rpc
+python setup.py install
+ 3. django-rpc should be installed and ready. 
