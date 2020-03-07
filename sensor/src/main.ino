@@ -23,7 +23,7 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED) {
         //connected to wifi
         //TODO get jsonrpc stuff set up
-        HttpClient httpclient(WiFi.localIP());
+        //HttpClient httpclient(WiFi.localIP());
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
         transmitStoredTemperature();
