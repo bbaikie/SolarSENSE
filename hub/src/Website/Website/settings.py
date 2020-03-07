@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'SolarSENSE',
     'taggit',
     'django_extensions',
+    'jsonrpc',
 ]
 
 MIDDLEWARE = [
