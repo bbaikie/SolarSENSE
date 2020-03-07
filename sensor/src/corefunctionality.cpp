@@ -1,5 +1,4 @@
 #include "corefunctionality.h"
-#include <list>
 
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
@@ -21,69 +20,48 @@ void sampleAndStoreTemperature(){
 
 //function that takes a pointer to a list                       
 //then adds the Moisture variable to end of list 
-void sampleAndStoreMoisture(list *list){
+void sampleAndStoreMoisture(){
     
     double moist; 
-    for(int i = 1; i<= list.size();i++){
-    list.emplace_back(i); 
-    }
 }
 
 //function that takes a pointer to a list                       
 //then adds the phosphate variable to end of list 
-void sampleAndStorePhosphate(list *list){
+void sampleAndStorePhosphate(){
     
     double phos; 
-    for(int i = 1; i<= list.size();i++){
-    list.emplace_back(i); 
-    }
 }
 
 //function that takes a pointer to a list                       
 //then adds the sunlight variable to end of list 
-void sampleAndStoreSunlight(list *list){
+void sampleAndStoreSunlight(){
     
     double sun; 
-    for(int i = 1; i<= list.size();i++){
-    list.emplace_back(i); 
-    }
 }
 
 //function that takes in pointer to list
 //then transmitts list containing temperature
-void transmitStoredTemperature(list *list){
+void transmitStoredTemperature(){
     
-    for(int i = 1; i<=list.size();i++){
-
-    }
      
 }
 
 //function that takes in pointer to list 
 //then transmitts list containing moisture 
-void transmitStoredMoisture(list *list){
+void transmitStoredMoisture(){
     //TODO fill in
-   for(int i = 1; i<=list.size();i++){
-
-    } 
 }
 
 //function that takes in pointer to list 
 //then transmitts list containing phosphate
 void transmitStoredPhosphate(){
     //TODO fill in
-   for(int i = 1; i<=list.size();i++){
-
-   } 
 }
 
 //function that takes in pointer to list 
 //then transmitts list containing sunlight 
 void transmitStoredSunlight(){
     //TODO fill in
-    for(int i = 1; i<=list.size();i++){
-
-    } 
 }
 
 void turnOffWiFi() {

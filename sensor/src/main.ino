@@ -1,5 +1,7 @@
-#include <jsonrpccpp/client/connectors/httpclient.h>
+//#include <jsonrpccpp/client/connectors/httpclient.h>
 #include "corefunctionality.h"
+//I don't know why, but WiFi.h needs to be included here
+#include <WiFi.h>
 
 void setup() {
     Serial.begin(115200);
@@ -9,6 +11,7 @@ void setup() {
 
 void loop() {
     sampleAndStoreTemperature();
+    delay(700);
 }
 
 /*

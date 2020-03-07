@@ -29,7 +29,7 @@ VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
-SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
+SENSOR_MAKE := make -C sensor -f makeEspArduino.mk SKETCH=src/main.ino
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
