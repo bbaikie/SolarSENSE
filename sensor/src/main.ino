@@ -1,29 +1,21 @@
-#include <jsonrpccpp/client/connectors/httpclient.h>
+//#include <jsonrpccpp/client/connectors/httpclient.h>
 #include "corefunctionality.h"
+//I don't know why, but any esp32 libraries included in corefunctionality.h need to be included here
+#include <WiFi.h>
+#include <Preferences.h>
 
 void setup() {
-    //TODO make sure there's no set up stuff we need to do
+    Serial.begin(115200);
+    delay(1000);
+    //TODO figure out what setup stuff we need to do
 }
 
 void loop() {
-
-//list for temperature
-list<double> tlist;
-
-//list for moisture
-list<double> mlist;
-
-//list for phosphate
-list<double> plist;
-
-//list for sunlight
-list<double> slist;
-
-//sending four list to perspective sampel and store functions
-    sampleAndStoreTemperature(tlist);
-    sampleAndStoreMoisture(mlist);
-    sampleAndStorePhosphate(plist);
-    sampleAndStoreSunlight(slist);
+    //sending four list to perspective sampel and store functions
+    sampleAndStoreTemperature();
+    sampleAndStoreMoisture();
+    sampleAndStorePhosphate();
+    sampleAndStoreSunlight();
 
     //TODO put in correct wifi info
     connectToWifi("Wifi name", "wifi password");
@@ -31,7 +23,7 @@ list<double> slist;
     if (WiFi.status() == WL_CONNECTED) {
         //connected to wifi
         //TODO get jsonrpc stuff set up
-        HttpClient httpclient(WiFi.localIP());
+        //HttpClient httpclient(WiFi.localIP());
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
         transmitStoredTemperature();

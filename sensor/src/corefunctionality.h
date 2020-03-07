@@ -1,4 +1,6 @@
+#include "Arduino.h"
 #include <WiFi.h>
+#include <Preferences.h>
 /**
  * corefunctionality.h
  *
