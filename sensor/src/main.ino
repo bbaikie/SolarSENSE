@@ -11,12 +11,6 @@ void setup() {
 }
 
 void loop() {
-    sampleAndStoreTemperature();
-    delay(10000);
-}
-
-/*
-void loop() {
     //sending four list to perspective sampel and store functions
     sampleAndStoreTemperature();
     sampleAndStoreMoisture();
@@ -42,4 +36,3 @@ void loop() {
     //TODO find better low power mode time
     activateLowPowerMode(600);
 }
-*/
