@@ -66,7 +66,61 @@ void sampleAndStoreTemperature(){
 //then adds the Moisture variable to end of list 
 void sampleAndStoreMoisture(){
     
-    double moist; 
+    /* uses GPIO 26 and ADC #2*/
+
+    /*this samples the  value from the sensor*/
+    uint16_t adc_moist = analogRead(26);
+    Serial.println("Moist ADC value: ");
+    Serial.println(adc_moist);
+
+    /*Now we need to store the data collected from moisture sensor*/
+
+    /* if the data is valid*/
+    if(prefs.getBool("moist_valid")){
+
+        /*size of array*/ 
+        size_t aLength;
+        
+        /*begin lookig for data regardign moisture (moist)*/
+        prefs.begin("moist",false);
+
+        /*aLength will equal to size of array*/
+        aLength = prefs.getBytesLength("moist");
+
+        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
+        uint8_t moistureData[aLength + 2];
+        
+        /*asks for old data to prevent data overwrite*/
+        prefs.getBytes("moist", moistureData, aLength);
+
+        /*first incoming data entry will be the most signigficant bit*/
+        moistureData[aLength] = (uint8_t) adc_moist >> 8;
+        
+        /*the next data entry will be the least significant bits*/
+        moistureData[aLength + 1] = (uint8_t) (adc_moist & 0xff);
+
+        /*put bytes into array*/
+        prefs.putBytes("moist", moistureData, aLength);
+
+    }
+    
+    /*if we are just starting to read in data*/
+    else{
+        
+        prefs.begin("moist",false);
+
+        /*the very first input will be the most significant bit*/
+        moistureData[0] = (uint8_t) adc_moist >> 8;
+
+        /*the next 8 bits (least significant bits) will store the next entry*/
+        moistureData[aLength + 1] = (uint8_t) (adc_moist & 0xff);
+        
+           /*put bytes into array*/
+        prefs.putBytes("moist", moistureData, aLength);
+
+        prefs.begin("Moist_valid");
+        prefs.putBool("Moist_valid",true);
+    }
 }
 
 //function that takes a pointer to a list                       
@@ -110,7 +164,7 @@ void transmitStoredSunlight(){
     //TODO fill in
 }
 
-void turnOffWiFi() {
+void turnOffWiFi() { 
     WiFi.mode(WIFI_OFF);
 }
 
