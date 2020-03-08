@@ -167,7 +167,7 @@ void transmitStoredSunlight(){
     //TODO fill in
 }
 
-void turnOffWiFi() {
+void turnOffWiFi() { 
     WiFi.mode(WIFI_OFF);
 }
 
