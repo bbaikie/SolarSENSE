@@ -121,9 +121,6 @@ void sampleAndStoreMoisture(){
         prefs.begin("Moist_valid");
         prefs.putBool("Moist_valid",true);
     }
-     
-
-
 }
 
 //function that takes a pointer to a list                       
