@@ -12,10 +12,10 @@ void setup() {
 
 void loop() {
     //sending four list to perspective sampel and store functions
-    sampleAndStoreTemperature();
+    //sampleAndStoreTemperature();
     sampleAndStoreMoisture();
-    sampleAndStorePhosphate();
-    sampleAndStoreSunlight();
+    //sampleAndStorePhosphate();
+    //sampleAndStoreSunlight();
 
     //TODO put in correct wifi info
     connectToWifi("Wifi name", "wifi password");
@@ -23,13 +23,13 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED) {
         //connected to wifi
         //TODO get jsonrpc stuff set up
-        HttpClient httpclient(WiFi.localIP());
+       // HttpClient httpclient(WiFi.localIP());
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
-        transmitStoredTemperature();
-        transmitStoredMoisture();
-        transmitStoredPhosphate();
-        transmitStoredSunlight();
+        //transmitStoredTemperature();
+        //transmitStoredMoisture();
+        //transmitStoredPhosphate();
+        //transmitStoredSunlight();
     }
 
     //Go into low power mode for 6 minutes
