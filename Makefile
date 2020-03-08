@@ -29,7 +29,7 @@ VENV_ACTIVATE=. $(VENV_NAME)/bin/activate
 #CXXFLAGS = --coverage
 GCOVFLAGS = -fprofile-arcs -ftest-coverage -fPIC -O0
 
-SENSOR_MAKE := make -C sensor -f makeEspArduino.mk
+SENSOR_MAKE := make -C sensor -f makeEspArduino.mk SKETCH=src/main.ino
 SENSOR_REPORT_DIR := sensor/reports
 SENSOR_TEST_DIR := sensor/test
 SENSOR_GCOV_DIR := $(SENSOR_REPORT_DIR)/gcov
@@ -189,7 +189,7 @@ pytest: pip-pytest
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
   
 setup-server: pip 
-	pip install gunicorn
+	sudo apt-get install gunicorn3
 	cd ~
 	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .profile
 	echo 'export PYTHONPATH=$PYTHONPATH:/home/pi/SolarSENSE/hub/src/Website' >> .profile
