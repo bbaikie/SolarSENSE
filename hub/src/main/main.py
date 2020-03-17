@@ -11,7 +11,7 @@ class Data(models.Model):
 	
 
 # List of methods to grab all 4 points of data
-@jsonrpc_method('myapp.setData')
+@jsonrpc_method('main.sendTemperatureData')
 def storeTemp(request, temperature):
     #for x in (temperature.JSONArray.length)
     	#data = new 		#Data(temperature_readings=(temperature.JSONArray(x)))
@@ -21,24 +21,24 @@ def storeTemp(request, temperature):
 	#How to loop through and save as different data objects? or do 
 	#we want to do that?
 
-@jsonrpc_method('myapp.setData')
+@jsonrpc_method('main.sendMoistureData')
 def storeMoisture(request, moisture):
     #database.add(moisture)
     return moisture
 
-@jsonrpc_method('myapp.setData')
+@jsonrpc_method('main.sendPhosphorusData')
 def storePhosphorus(request, phosphorus):
     #database.add(phosphorus)
     return phosphorus
 
-@jsonrpc_method('myapp.setData')
+@jsonrpc_method('myapp.sendSunlightData')
 def storeSunlight(request, sunlight):
     #database.add(sunlight)
     return sunlight
 
-@method
-def storeSunlight(sunlight):
-    return bool
+#@method
+#def storeSunlight(sunlight):
+    #return bool
 
 # Starts instance of server
 if __name__ == "__main__":
