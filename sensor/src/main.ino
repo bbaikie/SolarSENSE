@@ -4,6 +4,9 @@
 #include <WiFi.h>
 #include <Preferences.h>
 
+const char* ssid "NameOfNetwork"
+const char* password "AardvarkBadgerHedgehog"
+
 void setup() {
     Serial.begin(115200);
     delay(1000);
@@ -18,7 +21,7 @@ void loop() {
     sampleAndStoreSunlight();
 
     //TODO put in correct wifi info
-    connectToWifi("Wifi name", "wifi password");
+    connectToWifi(ssid, password);
 
     if (WiFi.status() == WL_CONNECTED) {
         //connected to wifi
