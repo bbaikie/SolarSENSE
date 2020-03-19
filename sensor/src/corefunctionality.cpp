@@ -127,7 +127,9 @@ void sampleAndStoreMoisture(){
 //then adds the phosphate variable to end of list 
 void sampleAndStorePhosphate(){
     
-    double phos; 
+    uint16_t adc_moist = analogRead(26);
+    Serial.println("Moist ADC value: ");
+    Serial.println(adc_moist);
 }
 
 //function that takes a pointer to a list                       
