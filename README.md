@@ -63,16 +63,15 @@ To access the internet add a wifi network following [these](https://www.raspberr
 
 ### Install solarSENSE hub
 1. SSH onto the raspberry pi.
-2. Install [git](https://git-scm.com/downloads).
-3. Execute the command `$ git clone URL` where URL is the url of the [SolarSENSE](https://github.com/jeremiah-miller/SolarSENSE/tree/dev-sprint3) repository.
-4. Navigate to the base directory of the SolarSENSE repo folder.
-5. Execute the command `$ make init`.
-6. Execute the command `$ make setup-server`
-7. Once the raspberry pi finishes rebooting, ssh onto it again and follow the instructions for installing the Django packages, the database, and setting up Nginx
-
-### Install Django packages
-1. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
-2. `$ python3 manage.py makemigrations SolarSENSE`
+2. Use `sudo raspi-config` to configure the device locale and country
+3. Run `sudo apt update && sudo apt upgrade` to update the software on the hub to the latest versions.
+4. Install [git](https://git-scm.com/downloads) and npm using apt.
+5. Execute the command `$ git clone https://github.com/jeremiah-miller/SolarSENSE.git` to clone the repo into the home folder of the hub
+6. Navigate to the base directory of the SolarSENSE repo folder.
+7. Execute the command `$ make init`.
+8. Execute the command `$ make setup-server`
+8. Execute the command `$ make wifi`
+9. Once the raspberry pi finishes rebooting, ssh onto it again and follow the instructions for installing the the database and setting up Nginx
 
 ### Install the database
 1. `$ sudo -u postgres psql`
@@ -89,7 +88,8 @@ To access the internet add a wifi network following [these](https://www.raspberr
 12. Change the item directly below the Method column label to "trust" for the first three rows in the table at the bottom of the file.
 13. `$ sudo service postgresql restart`
 14. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
-15. run `$ python3 manage.py migrate` which should write some data to the database.
+15. run `$ python3 manage.py makemigrations SolarSENSE`
+16. run `$ python3 manage.py migrate` which should write some data to the database.
 
 ### Setting up Nginx
 1. Navigate to the config directory inside the the root of your SolarSENSE repo
