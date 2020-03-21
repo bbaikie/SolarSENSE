@@ -19,12 +19,6 @@ class DataTagged(GenericTaggedItemBase):
         related_name="%(app_label)s_%(class)s_items"
     )
 
-class VideoCollection(models.Model):
-    def __str__(self):
-        return self.name
-
-    name = models.CharField(max_length=255)
-
 class Video(models.Model):
 
     def __str__(self):
@@ -32,5 +26,4 @@ class Video(models.Model):
 
     name = models.CharField(max_length=255)
     content = models.FileField()
-    collection = models.ForeignKey(VideoCollection, null=True, on_delete=models.CASCADE)
     tags = TaggableManager(through=DataTagged, blank=True)
