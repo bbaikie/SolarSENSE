@@ -14,6 +14,8 @@ const char* password "AardvarkBadgerHedgehog"
 void setup() {
     Serial.begin(115200);
     delay(1000);
+    //TODO remove this connectToWifi
+    connectToWifi(ssid, password);
     //TODO figure out what setup stuff we need to do
 }
 
@@ -27,12 +29,23 @@ void loop() {
     */
 
     //TODO put in correct wifi info
-    connectToWifi(ssid, password);
+    //connectToWifi(ssid, password);
 
     if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("Connected to wifi");
         //connected to wifi
-        HttpClient httpclient(WiFi.localIP());
+        String http = WiFi.localIP() + ":8080/json/";
+        HttpClient httpclient(http);
         StubClient jsonClient(httpclient, JSONRPC_CLIENT_V2);
+        Json::Value testArr;
+        Json::Value testRetArr;
+
+        //put sample data into testArr
+        testArr[0] = 3.1;
+        testArr[1] = 4.2;
+        testArr[2] = 5.3;
+        testArr[3] = 6.4;
+        testArr[4] = 7.5;
 
         try {
             testRetArr = jsonClient.sendTemperatureData(testArr);
@@ -53,9 +66,12 @@ void loop() {
         transmitStoredPhosphate();
         transmitStoredSunlight();
         */
+    } else {
+        Serial.println("Not connected to wifi");
     }
 
     //Go into low power mode for 6 minutes
     //TODO find better low power mode time
-    activateLowPowerMode(600);
+    //activateLowPowerMode(600);
+    delay(10000);
 }
