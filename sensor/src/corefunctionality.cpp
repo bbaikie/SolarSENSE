@@ -127,9 +127,37 @@ void sampleAndStoreMoisture(){
 //then adds the phosphate variable to end of list 
 void sampleAndStorePhosphate(){
     
-    uint16_t adc_moist = analogRead(26);
-    Serial.println("Moist ADC value: ");
-    Serial.println(adc_moist);
+    uint16_t adc_phos = analogRead(26);
+    Serial.println("phosphate ADC value: ");
+    Serial.println(adc_phos);
+
+       if(prefs.getBool("phos_valid")){
+
+        /*size of array*/ 
+        size_t aLength;
+        
+        /*begin lookig for data regardign moisture (moist)*/
+        prefs.begin("phosphate",false);
+
+        /*aLength will equal to size of array*/
+        aLength = prefs.getBytesLength("phosphate");
+
+        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
+        uint8_t phosphateData[aLength + 2];
+        
+        /*asks for old data to prevent data overwrite*/
+        prefs.getBytes("phosphate", phosphateData, aLength);
+
+        /*first incoming data entry will be the most signigficant bit*/
+        phosphateData[aLength] = (uint8_t) adc_phos >> 8;
+        
+        /*the next data entry will be the least significant bits*/
+        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
+
+        /*put bytes into array*/
+        prefs.putBytes("moist", phosphateData, aLength);
+
+    }
 }
 
 //function that takes a pointer to a list                       
