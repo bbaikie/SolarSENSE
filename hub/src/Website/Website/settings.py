@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'SolarSENSE',
     'taggit',
     'django_extensions',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
