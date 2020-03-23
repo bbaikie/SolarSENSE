@@ -2,6 +2,8 @@
 {% block object-tools %}
     <form action="{% url 'uploadVideos' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        <input type="file" name="videos" id="videos" multiple="True">
+        <input type="submit" value="Upload Files">
     </form>
     {{ block.super }}
 {% endblock object-tools %}
