@@ -158,6 +158,23 @@ void sampleAndStorePhosphate(){
         prefs.putBytes("moist", phosphateData, aLength);
 
     }
+
+    /*if we are just starting to read in data*/
+    else{
+        
+        prefs.begin("phosphate",false);
+
+        /*the very first input will be the most significant bit*/
+        phosphateData[0] = (uint8_t) adc_phos >> 8;
+
+        /*the next 8 bits (least significant bits) will store the next entry*/
+        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
+        
+           /*put bytes into array*/
+        prefs.putBytes("moist", phosphateData, aLength);
+
+        prefs.begin("Phosphate_valid");
+        p
 }
 
 //function that takes a pointer to a list                       
