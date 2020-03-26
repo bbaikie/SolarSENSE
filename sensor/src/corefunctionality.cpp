@@ -181,7 +181,37 @@ void sampleAndStorePhosphate(){
 //then adds the sunlight variable to end of list 
 void sampleAndStoreSunlight(){
     
-    double sun; 
+    uint16_t adc_sun = analogRead(27);
+    Serial.println("Sunlight ADC value: ");
+    Serial.println(adc_sun);
+
+       if(prefs.getBool("sun_valid")){
+
+        /*size of array*/ 
+        size_t aLength;
+        
+        /*begin lookig for data regardign moisture (moist)*/
+        prefs.begin("sunlight",false);
+
+        /*aLength will equal to size of array*/
+        aLength = prefs.getBytesLength("sunlight");
+
+        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
+        uint8_t sundlightData[aLength + 2];
+        
+        /*asks for old data to prevent data overwrite*/
+        prefs.getBytes("sunlight", sunlightData, aLength);
+
+        /*first incoming data entry will be the most signigficant bit*/
+        sunlightData[aLength] = (uint8_t) adc_sun >> 8;
+        
+        /*the next data entry will be the least significant bits*/
+        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
+
+        /*put bytes into array*/
+        prefs.putBytes("sunlight", sunlightData, aLength);
+
+    }
 }
 
 //function that takes in pointer to list
