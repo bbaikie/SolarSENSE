@@ -55,5 +55,7 @@ def showTags(request):
         "videos":videos,
         "nameSet":tuple(names)
     }
-    
     return render(request, "tagResult.html", context)
+
+def uploadVideos(request):
+    return HttpResponse("This is another test")
