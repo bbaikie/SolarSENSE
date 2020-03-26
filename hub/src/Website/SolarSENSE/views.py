@@ -59,4 +59,8 @@ def showTags(request):
     return render(request, "tagResult.html", context)
 
 def uploadVideos(request):
+    if request.method == "POST":
+        files = request.FILES.getlist('file_field')
+        for f in files:
+            Video.objects.create(name=f.name, content=f)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
