@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from SolarSENSE.models import Video
+from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
 
 def test(request):
@@ -58,4 +59,4 @@ def showTags(request):
     return render(request, "tagResult.html", context)
 
 def uploadVideos(request):
-    return HttpResponse("This is another test")
+    return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
