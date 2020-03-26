@@ -27,3 +27,11 @@ class Video(models.Model):
     name = models.CharField(max_length=255)
     content = models.FileField()
     tags = TaggableManager(through=DataTagged, blank=True)
+
+
+class Collections(models.Model):
+    date_time = models.DateTimeField(auto_now_add=True)
+    moisture = models.DecimalField(max_digits=5, decimal_places=2)
+    temperature = models.DecimalField(max_digits=5, decimal_places=2)
+    sunlight = models.DecimalField(max_digits=5, decimal_places=2)
+    phosphate = models.DecimalField(max_digits=5, decimal_places=2)
