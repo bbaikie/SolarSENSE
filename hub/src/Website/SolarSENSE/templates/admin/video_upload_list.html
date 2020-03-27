@@ -3,7 +3,7 @@
     <form action="{% url 'uploadVideos' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="videos" id="videos" multiple="True">
-        <input type="submit" value="Upload Files">
+        <input type="submit" value="Upload Files" class="button">
     </form>
     {{ block.super }}
 {% endblock object-tools %}
