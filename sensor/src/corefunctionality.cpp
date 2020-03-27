@@ -174,7 +174,8 @@ void sampleAndStorePhosphate(){
         prefs.putBytes("moist", phosphateData, aLength);
 
         prefs.begin("Phosphate_valid");
-        p
+        
+        }
 }
 
 //function that takes a pointer to a list                       
@@ -211,7 +212,23 @@ void sampleAndStoreSunlight(){
         /*put bytes into array*/
         prefs.putBytes("sunlight", sunlightData, aLength);
 
-    }
+    } /*if we are just starting to read in data*/
+    else{
+        
+        prefs.begin("sunlight",false);
+
+        /*the very first input will be the most significant bit*/
+        sunlightData[0] = (uint8_t) adc_sun >> 8;
+
+        /*the next 8 bits (least significant bits) will store the next entry*/
+        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
+        
+           /*put bytes into array*/
+        prefs.putBytes("sunlight", sunlightData, aLength);
+
+        prefs.begin("Sunlight_valid");
+        
+        }
 }
 
 //function that takes in pointer to list
