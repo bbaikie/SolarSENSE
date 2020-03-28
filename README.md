@@ -63,16 +63,39 @@ To access the internet add a wifi network following [these](https://www.raspberr
 
 ### Install solarSENSE hub
 1. SSH onto the raspberry pi.
-2. Install [git](https://git-scm.com/downloads).
-3. Execute the command `$ git clone URL` where URL is the url of the [SolarSENSE](https://github.com/jeremiah-miller/SolarSENSE/tree/dev-sprint3) repository.
-4. Navigate to the base directory of the SolarSENSE repo folder.
-5. Execute the command `$ make init`.
+2. Use `sudo raspi-config` to configure the device locale and country
+3. Run `sudo apt update && sudo apt upgrade` to update the software on the hub to the latest versions.
+4. Install [git](https://git-scm.com/downloads) and npm using apt.
+5. Execute the command `$ git clone https://github.com/jeremiah-miller/SolarSENSE.git` to clone the repo into the home folder of the hub
+6. Navigate to the base directory of the SolarSENSE repo folder.
+7. Execute the command `$ make init`.
+8. Execute the command `$ make setup-server`
+8. Execute the command `$ make wifi`
+9. Once the raspberry pi finishes rebooting, ssh onto it again and follow the instructions for installing the the database and setting up Nginx
+
+### Install the database
+1. `$ sudo -u postgres psql`
+2. `create database solarsense;`
+3. `create user admin;`
+4. `ALTER ROLE admin SET client_encoding TO 'utf8';`
+5. `ALTER ROLE admin SET default_transaction_isolation TO 'read committed';`
+6. `ALTER ROLE admin SET timezone TO 'UTC';`
+7. `GRANT ALL PRIVILEGES ON DATABASE solarsense TO admin;`
+8. `show hba_file;`
+9. `\q`
+10. Navigate to the directory displayed in the last instruction.
+11. `sudo nano pg_hba.conf`
+12. Change the item directly below the Method column label to "trust" for the first three rows in the table at the bottom of the file.
+13. `$ sudo service postgresql restart`
+14. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
+15. run `$ python3 manage.py makemigrations SolarSENSE`
+16. run `$ python3 manage.py migrate` which should write some data to the database.
 
 ### Setting up Nginx
 1. Navigate to the config directory inside the the root of your SolarSENSE repo
-2. `$ sudo mv nginx.conf /etc/nginx/`
-3. `$ sudo mv gunicorn.service /etc/systemd/system/`
-4. `$ sudo mv gunicorn.socket /etc/systemd/system/`
+2. `$ sudo cp nginx.conf /etc/nginx/`
+3. `$ sudo cp gunicorn.service /etc/systemd/system/`
+4. `$ sudo cp gunicorn.socket /etc/systemd/system/`
 5. `$ sudo systemctl start gunicorn.socket`
 6. `$ sudo systemctl enable gunicorn.socket`
 7. `$ curl --unix-socket /run/gunicorn.sock 192.168.4.1` should return This is a test.
@@ -84,35 +107,11 @@ To access the internet add a wifi network following [these](https://www.raspberr
 13. Connect a device to the hub wifi network and enter 192.168.4.1/staticTest into a browser. Two images and one video should display.
 
 #### Troubleshooting
-* Nginx Process Logs: sudo journalctl -u nginx
-* Nginx Access Logs: sudo less /var/log/nginx/access.log
-* Nginx Error Logs: sudo less /var/log/nginx/error.log
-* Gunicorn Application Log: sudo journalctl -u gunicorn
-* Gunicorn Socket Log: sudo journalctl -u gunicorn.socket
-
-### Install the database
-1. `$ pip3 install psycopg2`
-2. `$ sudo apt-get install libpq-dev postgresql postgresql-contrib`
-3. `$ sudo -u postgres psql`
-4. `create database solarsense;`
-5. `create user admin;`
-6. `ALTER ROLE admin SET client_encoding TO 'utf8';`
-7. `ALTER ROLE admin SET default_transaction_isolation TO 'read committed';`
-8. `ALTER ROLE admin SET timezone TO 'UTC';`
-9. `GRANT ALL PRIVILEGES ON DATABASE solarsense TO admin;`
-10. `show hba_file;`
-11. `\q`
-12. Navigate to the directory displayed in the last instruction.
-13. `sudo nano pg_hba.conf`
-14. Change the method to trust for the first three rows in the table at the bottom of the file.
-15. `$ sudo service postgresql restart`
-16. Navigate to the folder containing the manage.py file. It should be inside the SolarSENSE project folder under Website.
-17. run `$ python3 manage.py migrate` which should write some data to the database.
-
-### Install Django packages
-1. `$ pip3 install django-taggit`
-2. `$ pip3 install django-extensions`
-3. `$ python3 manage.py makemigration SolarSENSE`
+* Nginx Process Logs: `sudo journalctl -u nginx`
+* Nginx Access Logs: `sudo less /var/log/nginx/access.log`
+* Nginx Error Logs: `sudo less /var/log/nginx/error.log`
+* Gunicorn Application Log: `sudo journalctl -u gunicorn`
+* Gunicorn Socket Log: `sudo journalctl -u gunicorn.socket`
 
 ### Set up JSON-RPC for C++
 This is only necessary for developing for the ESP32 sensor processor board, and should be done on whichever computer is being used for programming, not the hub Raspberry Pi (unless the hub Raspberry Pi is the computer being used to develop for the ESP32).

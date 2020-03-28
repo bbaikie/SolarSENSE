@@ -188,11 +188,12 @@ pytest: pip-pytest
 	mkdir -p $(HUB_PYTEST_DIR)
 	pytest --cov-report=html:$(HUB_PYTEST_DIR) --cov-branch $(HUB_TEST_DIR)
   
-setup-server: pip 
-	sudo apt-get install gunicorn3
-	cd ~
-	echo 'export PATH:$PATH:/home/pi/.local/bin/' >> .profile
-	echo 'export PYTHONPATH=$PYTHONPATH:/home/pi/SolarSENSE/hub/src/Website' >> .profile
+setup-server:
+	sudo apt-get install -y gunicorn3 hostapd dnsmasq nginx python3 python3-dev python3-pip build-essential mongodb-server git libpq-dev postgresql postgresql-contrib vim
+	sudo pip3 install flask uwsgi flask_wtf pymongo flask_jsonpify flask-cors numpy django-json-rpc psycopg2 django-taggit django-extensions
+	echo "export PATH=$PATH:/home/pi/.local/bin/" >> ~/.profile
+	echo "export PYTHONPATH=$PYTHONPATH:/home/pi/SolarSENSE/hub/src/Website" >> ~/.profile
+
 
 wifi: 
 	bash config/bash\ scripts/wifi.sh
