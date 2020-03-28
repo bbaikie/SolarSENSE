@@ -68,7 +68,7 @@ def uploadVideos(request):
 
 def changeTags(request):
     objType = ContentType.objects.get_for_id(request.GET["ct"])
-    videoQuerySet = Video.objects.empty()
+    videoQuerySet = Video.objects.none()
     for id in request.GET["ids"]:
         if id == request.GET["ids"][0]:
             objType.get_object_for_this_type(pk=id).union(videoQuerySet)
