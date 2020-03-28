@@ -78,7 +78,7 @@ def changeTags(request):
             video_query_set.append(objType.get_object_for_this_type(pk=id))
         
         for video in video_query_set:
-            for tag in request.POST["Option"]:
+            for tag in request.POST.getlist("Option"):
                 video.tags.add(tag)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
