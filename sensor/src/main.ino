@@ -1,13 +1,12 @@
-//#include "corefunctionality.h"
+#include "corefunctionality.h"
 //I don't know why, but any esp32 libraries included in corefunctionality.h need to be included here
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <HTTPClient.h>
 #include <Preferences.h>
 
-using namespace jsonrpc;
-
-const char* ssid "NameOfNetwork"
-const char* password "AardvarkBadgerHedgehog"
+const char* ssid = "NameOfNetwork";
+const char* password = "AardvarkBadgerHedgehog";
 
 void setup() {
     Serial.begin(115200);
@@ -33,21 +32,24 @@ void loop() {
         Serial.println("Connected to wifi");
         //connected to wifi
         String http = WiFi.localIP() + ":8080/json/";
-        HTTPClient httpclient(http);
+        HTTPClient httpclient;
+        httpclient.begin(http);
 
         //Examples used as reference: https://www.jsonrpc.org/specification
         String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"sendTemperatureData\", \"params\": [3.1, 4.2, 5.3, 6.4, 7.5], \"id\": 1}";
 
-        int httpcode = http.GET();
+        int httpcode = httpclient.GET();
 
         if (httpcode > 0) {
-            if(httpCode == HTTP_CODE_OK) {
-                String payload = http.getString();
+            if(httpcode == HTTP_CODE_OK) {
+                String payload = httpclient.getString();
                 Serial.println(payload);
             }
         } else {
             Serial.println("Error");
         }
+
+        httpclient.end();
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
         /*
