@@ -26,7 +26,7 @@ class Video(models.Model):
 
     name = models.CharField(max_length=255)
     content = models.FileField()
-    tags = TaggableManager(through=DataTagged, blank=True)
+    tags = TaggableManager(blank=True)
 
 
 class Collections(models.Model):
