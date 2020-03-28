@@ -26,7 +26,7 @@ SECRET_KEY = '%^$_u_k)tt69ys&3pnawe8cuulxgbj#f$hvt#^(dupd&)t%r6w'
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.2.2', '192.168.4.1']
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # Application definition
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'SolarSENSE',
     'taggit',
     'django_extensions',
+    'django_cleanup.apps.CleanupConfig',
     'jsonrpc',
 ]
 
