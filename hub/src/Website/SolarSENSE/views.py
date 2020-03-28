@@ -67,14 +67,19 @@ def uploadVideos(request):
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
 def changeTags(request):
-    objType = ContentType.objects.get_for_id(request.GET["ct"])
-    ids = request.GET["ids"].split(",")
-    videoQuerySet = []
-    for id in ids:
-        videoQuerySet.append(objType.get_object_for_this_type(pk=id))
+    if request.method == "GET":
+        objType = ContentType.objects.get_for_id(request.GET["ct"])
+        ids = request.GET["ids"].split(",")
+        request.session["video_query_set"] = []
+        for id in ids:
+            request.session["video_query_set"].append(objType.get_object_for_this_type(pk=id))
+        return render(request, "admin/set_tag_page.html", {})
+    elif request.method == "POST":
+        for video in request.session["video_query_set"]:
+            for tag in request.POST:
+                video.tags.add(tag)
+
     
-        
-    return render(request, "admin/set_tag_page.html", {"videos": tuple(videoQuerySet)})
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
