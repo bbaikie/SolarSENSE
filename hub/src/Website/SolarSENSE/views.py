@@ -65,6 +65,8 @@ def uploadVideos(request):
             Video.objects.create(name=f.name, content=f)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
+def changeTags(request):
+    return HttpResponse("This is a test")
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
