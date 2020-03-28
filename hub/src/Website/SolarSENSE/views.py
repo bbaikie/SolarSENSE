@@ -66,7 +66,7 @@ def uploadVideos(request):
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
 def changeTags(request):
-    return HttpResponse("This is a test")
+    return render(request, "admin/set_tag_page.html", {})
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 

@@ -12,7 +12,7 @@ class BatchUploadAdmin(admin.ModelAdmin):
         selected = queryset.values_list("pk", flat=True)
         ct = ContentType.objects.get_for_model(queryset.model)
         # self.message_user(request, "Successfully added tag")
-        return HttpResponseRedirect("/admin/SolarSENSE/video/changeTags")
+        return HttpResponseRedirect("/changeTags")
     add_tags.short_description = "Add Tags"
 
 admin.site.register(Video, BatchUploadAdmin)
