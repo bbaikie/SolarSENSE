@@ -68,9 +68,8 @@ def uploadVideos(request):
 
 def changeTags(request):
     objType = ContentType.objects.get_for_id(request.GET["ct"])
-    videoSet = Video.objects.none()
     for id in request.GET["ids"]:
-        videoSet.union(objType.get_object_for_this_type(pk=id))
+        videoSet = objType.get_object_for_this_type(pk=id)
         
     return render(request, "admin/set_tag_page.html", {})
 # def importTagSettings(request):
