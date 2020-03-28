@@ -3,9 +3,11 @@
 {% block content %}
 <p>Select tags to apply:</p>
 <form action="{% url 'changeTags' %}" method="post">
-    <label for=""></label>
-    <input type="checkbox" name="This" id="This">
-    <input type="checkbox" name="That" id="That">
+    {% csrf_token %}
+    <label for="This"></label>
+    <input type="checkbox" name="This" id="This"><br>
+    <label for="That"></label>
+    <input type="checkbox" name="That" id="That"><br>
     <input type="submit" value="Submit">
 </form>
 {% endblock content %}
