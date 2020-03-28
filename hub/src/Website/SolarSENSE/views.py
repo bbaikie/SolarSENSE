@@ -68,12 +68,12 @@ def uploadVideos(request):
 
 def changeTags(request):
     objType = ContentType.objects.get_for_id(request.GET["ct"])
-    videoQuerySet = Video.objects.none()
+    videoQuerySet = []
     for id in request.GET["ids"]:
-        videoQuerySet |= objType.get_object_for_this_type(pk=id)
+        videoQuerySet.append(objType.get_object_for_this_type(pk=id))
     
         
-    return render(request, "admin/set_tag_page.html", {"videos", videoQuerySet})
+    return render(request, "admin/set_tag_page.html", {"videos", tuple(videoQuerySet)})
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
