@@ -4,6 +4,7 @@ from django.template import loader
 from SolarSENSE.models import Video
 from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
+from django.contrib.contenttypes.models import ContentType
 
 def test(request):
     return HttpResponse('This is a test page')
@@ -66,6 +67,11 @@ def uploadVideos(request):
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
 def changeTags(request):
+    objType = ContentType.objects.get_for_id(request.GET["ct"])
+    videoSet = Video.objects.none()
+    for id in request.GET["ids"]:
+        videoSet.union(objType.get_object_for_this_type(pk=id))
+        
     return render(request, "admin/set_tag_page.html", {})
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
