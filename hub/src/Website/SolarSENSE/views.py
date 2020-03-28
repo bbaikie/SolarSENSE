@@ -73,7 +73,7 @@ def changeTags(request):
         videoQuerySet.append(objType.get_object_for_this_type(pk=id))
     
         
-    return render(request, "admin/set_tag_page.html", {"videos", tuple(videoQuerySet)})
+    return render(request, "admin/set_tag_page.html", {"videos": tuple(videoQuerySet)})
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
