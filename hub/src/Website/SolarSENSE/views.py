@@ -70,10 +70,8 @@ def changeTags(request):
     objType = ContentType.objects.get_for_id(request.GET["ct"])
     videoQuerySet = Video.objects.none()
     for id in request.GET["ids"]:
-        if id == request.GET["ids"][0]:
-            objType.get_object_for_this_type(pk=id).union(videoQuerySet)
-        else:
-            videoQuerySet.union(objType.get_object_for_this_type(pk=id))
+        videoQuerySet |= objType.get_object_for_this_type(pk=id)
+    
         
     return render(request, "admin/set_tag_page.html", {"videos", videoQuerySet})
 # def importTagSettings(request):
