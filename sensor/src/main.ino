@@ -1,9 +1,7 @@
-#include <jsonrpccpp/client/connectors/httpclient.h>
-#include "gen/stubclient.h"
-
-#include "corefunctionality.h"
+//#include "corefunctionality.h"
 //I don't know why, but any esp32 libraries included in corefunctionality.h need to be included here
 #include <WiFi.h>
+#include <HTTPClient.h>
 #include <Preferences.h>
 
 using namespace jsonrpc;
@@ -35,28 +33,20 @@ void loop() {
         Serial.println("Connected to wifi");
         //connected to wifi
         String http = WiFi.localIP() + ":8080/json/";
-        HttpClient httpclient(http);
-        StubClient jsonClient(httpclient, JSONRPC_CLIENT_V2);
-        Json::Value testArr;
-        Json::Value testRetArr;
+        HTTPClient httpclient(http);
 
-        //put sample data into testArr
-        testArr[0] = 3.1;
-        testArr[1] = 4.2;
-        testArr[2] = 5.3;
-        testArr[3] = 6.4;
-        testArr[4] = 7.5;
+        //Examples used as reference: https://www.jsonrpc.org/specification
+        String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"sendTemperatureData\", \"params\": [3.1, 4.2, 5.3, 6.4, 7.5], \"id\": 1}";
 
-        try {
-            testRetArr = jsonClient.sendTemperatureData(testArr);
-            if(testArr == testRetArr) {
-                Serial.println("Success!");
-            } else {
-                Serial.println("Failure :(");
+        int httpcode = http.GET();
+
+        if (httpcode > 0) {
+            if(httpCode == HTTP_CODE_OK) {
+                String payload = http.getString();
+                Serial.println(payload);
             }
-        } catch(JsonRpcException &e) {
-            Serial.print("Error: ");
-            Serial.println(e.what());
+        } else {
+            Serial.println("Error");
         }
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
