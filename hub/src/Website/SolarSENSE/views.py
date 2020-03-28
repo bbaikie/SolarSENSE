@@ -76,10 +76,11 @@ def changeTags(request):
         video_query_set = []
         for id in request.session["ids"]:
             video_query_set.append(objType.get_object_for_this_type(pk=id))
-        
+
         for video in video_query_set:
             for tag in request.POST:
                 video.tags.add(tag)
+    return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
     
 # def importTagSettings(request):
