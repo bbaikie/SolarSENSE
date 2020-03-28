@@ -37,6 +37,7 @@ void loop() {
 
         //Examples used as reference: https://www.jsonrpc.org/specification
         String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"sendTemperatureData\", \"params\": [3.1, 4.2, 5.3, 6.4, 7.5], \"id\": 1}";
+        httpclient.POST(testjsonrpccall);
 
         int httpcode = httpclient.GET();
 
