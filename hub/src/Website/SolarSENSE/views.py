@@ -68,10 +68,11 @@ def uploadVideos(request):
 
 def changeTags(request):
     if request.method == "GET":
-        objType = ContentType.objects.get_for_id(request.GET["ct"])
+        request.session["ct"] = request.GET["ct"]
         request.session["ids"] = request.GET["ids"].split(",")
         return render(request, "admin/set_tag_page.html", {})
     elif request.method == "POST":
+        objType = ContentType.objects.get_for_id(request.session["ct"])
         video_query_set = []
         for id in request.session["ids"]:
             video_query_set.append(objType.get_object_for_this_type(pk=id))
