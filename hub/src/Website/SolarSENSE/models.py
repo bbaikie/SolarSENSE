@@ -29,9 +29,9 @@ class Video(models.Model):
     tags = TaggableManager(through=DataTagged, blank=True)
 
 
-class Collections(models.Model):
+class SensorCollections(models.Model):
     date_time = models.DateTimeField(auto_now_add=True)
-    moisture = models.DecimalField(max_digits=5, decimal_places=2)
-    temperature = models.DecimalField(max_digits=5, decimal_places=2)
-    sunlight = models.DecimalField(max_digits=5, decimal_places=2)
-    phosphate = models.DecimalField(max_digits=5, decimal_places=2)
+    moisture = models.DecimalField(max_digits=5, decimal_places=2 , default='0')
+    temperature = models.DecimalField(max_digits=5, decimal_places=2, default='0')
+    sunlight = models.DecimalField(max_digits=5, decimal_places=2, default='0')
+    phosphate = models.DecimalField(max_digits=5, decimal_places=2, default='0')
