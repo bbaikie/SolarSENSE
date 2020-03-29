@@ -1,0 +1,13 @@
+{% extends 'admin/base_site.html' %}
+
+{% block content %}
+<p>Select tags to apply:</p>
+<form action="{% url 'changeTags' %}" method="post">
+    {% csrf_token %}
+    <label for="This">This</label>
+    <input type="checkbox" name="Option" id="This" value="This"><br>
+    <label for="That">That</label>
+    <input type="checkbox" name="Option" id="That" value="That"><br>
+    <input type="submit" value="Submit">
+</form>
+{% endblock content %}
