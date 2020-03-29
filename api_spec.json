@@ -1,0 +1,19 @@
+[
+    {
+        "name": "sendTemperatureData",
+        "params": {
+            "temps": [
+                78.5,
+                83.4,
+                79.1
+            ]
+        },
+        "returns": {
+            "temps": [
+                78.5,
+                83.4,
+                79.1
+            ]
+        }
+    }
+]

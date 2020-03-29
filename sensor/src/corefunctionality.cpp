@@ -127,14 +127,108 @@ void sampleAndStoreMoisture(){
 //then adds the phosphate variable to end of list 
 void sampleAndStorePhosphate(){
     
-    double phos; 
+    uint16_t adc_phos = analogRead(26);
+    Serial.println("phosphate ADC value: ");
+    Serial.println(adc_phos);
+
+       if(prefs.getBool("phos_valid")){
+
+        /*size of array*/ 
+        size_t aLength;
+        
+        /*begin lookig for data regardign moisture (moist)*/
+        prefs.begin("phosphate",false);
+
+        /*aLength will equal to size of array*/
+        aLength = prefs.getBytesLength("phosphate");
+
+        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
+        uint8_t phosphateData[aLength + 2];
+        
+        /*asks for old data to prevent data overwrite*/
+        prefs.getBytes("phosphate", phosphateData, aLength);
+
+        /*first incoming data entry will be the most signigficant bit*/
+        phosphateData[aLength] = (uint8_t) adc_phos >> 8;
+        
+        /*the next data entry will be the least significant bits*/
+        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
+
+        /*put bytes into array*/
+        prefs.putBytes("moist", phosphateData, aLength);
+
+    }
+
+    /*if we are just starting to read in data*/
+    else{
+        
+        prefs.begin("phosphate",false);
+
+        /*the very first input will be the most significant bit*/
+        phosphateData[0] = (uint8_t) adc_phos >> 8;
+
+        /*the next 8 bits (least significant bits) will store the next entry*/
+        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
+        
+           /*put bytes into array*/
+        prefs.putBytes("moist", phosphateData, aLength);
+
+        prefs.begin("Phosphate_valid");
+        
+        }
 }
 
 //function that takes a pointer to a list                       
 //then adds the sunlight variable to end of list 
 void sampleAndStoreSunlight(){
     
-    double sun; 
+    uint16_t adc_sun = analogRead(27);
+    Serial.println("Sunlight ADC value: ");
+    Serial.println(adc_sun);
+
+       if(prefs.getBool("sun_valid")){
+
+        /*size of array*/ 
+        size_t aLength;
+        
+        /*begin lookig for data regardign moisture (moist)*/
+        prefs.begin("sunlight",false);
+
+        /*aLength will equal to size of array*/
+        aLength = prefs.getBytesLength("sunlight");
+
+        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
+        uint8_t sundlightData[aLength + 2];
+        
+        /*asks for old data to prevent data overwrite*/
+        prefs.getBytes("sunlight", sunlightData, aLength);
+
+        /*first incoming data entry will be the most signigficant bit*/
+        sunlightData[aLength] = (uint8_t) adc_sun >> 8;
+        
+        /*the next data entry will be the least significant bits*/
+        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
+
+        /*put bytes into array*/
+        prefs.putBytes("sunlight", sunlightData, aLength);
+
+    } /*if we are just starting to read in data*/
+    else{
+        
+        prefs.begin("sunlight",false);
+
+        /*the very first input will be the most significant bit*/
+        sunlightData[0] = (uint8_t) adc_sun >> 8;
+
+        /*the next 8 bits (least significant bits) will store the next entry*/
+        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
+        
+           /*put bytes into array*/
+        prefs.putBytes("sunlight", sunlightData, aLength);
+
+        prefs.begin("Sunlight_valid");
+        
+        }
 }
 
 //function that takes in pointer to list
