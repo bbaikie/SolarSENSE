@@ -31,14 +31,7 @@ class Video(models.Model):
 
 class SensorCollections(models.Model):
     date_time = models.DateTimeField(auto_now_add=True)
-<<<<<<< HEAD
     moisture = models.DecimalField(max_digits=5, decimal_places=2 , default='0')
     temperature = models.DecimalField(max_digits=5, decimal_places=2, default='0')
     sunlight = models.DecimalField(max_digits=5, decimal_places=2, default='0')
     phosphate = models.DecimalField(max_digits=5, decimal_places=2, default='0')
-=======
-    moisture = models.DecimalField(max_digits=5, decimal_places=2)
-    temperature = models.DecimalField(max_digits=5, decimal_places=2)
-    sunlight = models.DecimalField(max_digits=5, decimal_places=2)
-    phosphate = models.DecimalField(max_digits=5, decimal_places=2)
->>>>>>> 58fcd6678295281009c4408355d5c1fee05255a6
