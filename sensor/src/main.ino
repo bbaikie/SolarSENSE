@@ -31,26 +31,8 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED) {
         Serial.println("Connected to wifi");
         //connected to wifi
-        String http = WiFi.localIP() + ":8080/json/";
-        HTTPClient httpclient;
-        httpclient.begin(http);
 
-        //Examples used as reference: https://www.jsonrpc.org/specification
-        String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"sendTemperatureData\", \"params\": [3.1, 4.2, 5.3, 6.4, 7.5], \"id\": 1}";
-        httpclient.POST(testjsonrpccall);
-
-        int httpcode = httpclient.GET();
-
-        if (httpcode > 0) {
-            if(httpcode == HTTP_CODE_OK) {
-                String payload = httpclient.getString();
-                Serial.println(payload);
-            }
-        } else {
-            Serial.println("Error");
-        }
-
-        httpclient.end();
+        sendJsonRPCRequest("temp");
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
         /*

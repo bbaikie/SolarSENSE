@@ -1,5 +1,7 @@
 #include "Arduino.h"
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 #include <Preferences.h>
 /**
  * corefunctionality.h
@@ -93,3 +95,5 @@ void turnOffWiFi();
 void turnOnWifi();
 
 void connectToWifi(const char* ssid, const char* password);
+
+void sendJsonRPCRequest(string name);
