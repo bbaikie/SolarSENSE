@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from rpc4django.views import serve_rpc_request
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('SolarSENSE.urls')),
+    re_path(r'^RPC2$', serve_rpc_request),
 ]
 
 if settings.DEBUG:
