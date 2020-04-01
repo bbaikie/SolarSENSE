@@ -5,6 +5,12 @@ from SolarSENSE.models import Video
 from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
 from django.contrib.contenttypes.models import ContentType
+from jsonrpc import jsonrpc_method
+
+#JSONRPC TEST
+@jsonrpc_method('SolarSENSE.sayHello')
+def testRPC(request):
+    return "TEST IS WORKING"
 
 def test(request):
     return HttpResponse('This is a test page')
