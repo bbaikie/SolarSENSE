@@ -3,6 +3,8 @@
 Preferences prefs;
 HTTPClient httpclient;
 
+static const String host = "http://192.168.4.1";
+
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
     
@@ -92,10 +94,13 @@ string getDataAsArrayString(string name) {
 
     count = prefs.get("C", 0);
     for(int i = 0; i < count; i++) {
-        //TODO convert data to double value
-        data += to_string(prefs.getUShort(to_string(i)));
+        //TODO convert data to double value based on which name it is
+        unsigned short tempData = prefs.getUShort(to_string(i));
+
+        data += to_string(tempData);
 
         //Ensure all values are a double until we properly convert them
+        //TODO remove when possible
         data += ".0";
 
         //add comma and space after all elements except the last one
@@ -113,9 +118,15 @@ string getDataAsArrayString(string name) {
 }
 
 void sendJsonRPCRequest(string name) {
-    String http = WiFi.localIP() + ":8080/json/";
+    String http = host + ":8080/json/";
     string functionName;
     string data = getDataAsArrayString(name);
+
+    //no data stored for this name
+    if(data == "") {
+        return;
+    }
+
     //TODO add other cases
     if(name == "temp") {
         functionName = "sendTemperatureData";
@@ -124,7 +135,6 @@ void sendJsonRPCRequest(string name) {
         return;
     }
 
-    //TODO loop through all stored data and get it into a string
     String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"" + functionName + "\", \"params\": [" + data + "], \"id\": 1}";
     httpclient.begin(http);
     httpclient.POST(testjsonrpccall);
@@ -138,6 +148,7 @@ void sendJsonRPCRequest(string name) {
             Serial.println(payload);
             if(payload.find(data) != npos) {
                 Serial.println("Transmitted successfully");
+                //TODO uncomment once done testing
                 //clearData(name);
             }
         }
