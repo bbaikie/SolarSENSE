@@ -82,7 +82,9 @@ def changeTags(request):
                 video.tags.add(tag)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
-    
+# to Serve the infoNet offline website static files
+def infoNet(request):
+    return HttpResponse('Infonet site')
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 

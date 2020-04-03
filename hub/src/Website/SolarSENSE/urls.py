@@ -8,4 +8,5 @@ urlpatterns = [
     path('tagTest/showTags/', views.showTags, name="showTags"),
     path('uploadVideos/', views.uploadVideos, name="uploadVideos"),
     path('changeTags/', views.changeTags, name="changeTags"),
+    path('infoNet/'),
 ]
