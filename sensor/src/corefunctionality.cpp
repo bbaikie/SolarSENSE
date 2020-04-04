@@ -85,7 +85,7 @@ void sampleAndStorePhosphate(){
     Serial.println(adc_phos);
 
     storeData("temp", adc_phos);
-      
+        
 }
 
 //function that takes a pointer to a list                       
