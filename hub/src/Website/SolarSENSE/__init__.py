@@ -25,8 +25,11 @@ def setTemp(request, inputArr):
             del request.session['sunlight']
             del request.session['moisture']
             del request.session['temperature']
+            return True
         else:
             raise Exception("Number of values in response mismatched")
+    else:
+        return False
 
 @rpcmethod(name='setMoisture', signature=['array'])
 def setMoisture(request, inputArr):
@@ -49,8 +52,11 @@ def setMoisture(request, inputArr):
             del request.session['sunlight']
             del request.session['moisture']
             del request.session['temperature']
+            return True
         else:
             raise Exception("Number of values in response mismatched")
+    else:
+        return False
 
 @rpcmethod(name='setSun', signature=['array'])
 def setSun(request, inputArr):
@@ -73,8 +79,11 @@ def setSun(request, inputArr):
             del request.session['sunlight']
             del request.session['moisture']
             del request.session['temperature']
+            return True
         else:
             raise Exception("Number of values in response mismatched")
+    else:
+        return False
 
 @rpcmethod(name='setPhos', signature=['array'])
 def setPhos(request, inputArr):
@@ -97,5 +106,8 @@ def setPhos(request, inputArr):
             del request.session['sunlight']
             del request.session['moisture']
             del request.session['temperature']
+            return True
         else:
             raise Exception("Number of values in response mismatched")
+    else:
+        return False
