@@ -3,7 +3,10 @@
 Preferences prefs;
 HTTPClient httpclient;
 
+#define DATAPOINT_COUNT_LIMIT 20
+
 static const String host = "http://192.168.4.1";
+static unsigned char sendCount = 0;
 
 void activateLowPowerMode(int sleepSeconds){
     //TODO fill in
@@ -83,59 +86,60 @@ void connectToWifi(const char* ssid, const char* password) {
     }
 }
 
-string getDataAsArrayString(string name) {
+string getDataAsArrayString() {
     /*
      * TODO uncomment when merged with other preferences changes
     string data = "";
-    unsigned char count;
+    string name;
+    unsigned short tempData;
 
-    //open up datapoint's namespace in read only mode
-    prefs.begin(name, true);
+    for(int i = 0; i < 4; i++) {
+        //TODO Update to correct name strings and correct order
+        if(i == 0;) {
+            name = "temp";
+        } else if(i == 1) {
+            name = "mois";
+        } else if(i == 2) {
+            name = "phos";
+        } else {
+            name = "sun";
+        }
 
-    count = prefs.get("C", 0);
-    for(int i = 0; i < count; i++) {
-        //TODO convert data to double value based on which name it is
-        unsigned short tempData = prefs.getUShort(to_string(i));
+        //open up datapoint's namespace in read only mode
+        prefs.begin(name, true);
 
+        tempData = prefs.getUShort(to_string(sendCount));
+        //TODO Convert according to datatype
         data += to_string(tempData);
-
         //Ensure all values are a double until we properly convert them
         //TODO remove when possible
         data += ".0";
 
         //add comma and space after all elements except the last one
-        if(i < (count-1)) {
+        if(i < (4-1)) {
             data += ", ";
         }
-    }
 
-    prefs.end();
+        prefs.end();
+    }
 
     return data;
     */
 
-    return "3.1, 4.2, 5.3, 6.4, 7.5";
+    return "3.1, 4.2, 5.3, 6.4";
 }
 
-void sendJsonRPCRequest(string name) {
-    String http = host + ":8080/json/";
-    string functionName;
+void sendJsonRPCRequest() {
     string data = getDataAsArrayString(name);
 
-    //no data stored for this name
+    //no data to be sent
     if(data == "") {
         return;
     }
 
-    //TODO add other cases
-    if(name == "temp") {
-        functionName = "sendTemperatureData";
-    } else {
-        //Invalid name
-        return;
-    }
+    String http = host + ":8080/json/";
 
-    String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"" + functionName + "\", \"params\": [" + data + "], \"id\": 1}";
+    String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"TODOFILLINFUNCNAME\", \"params\": [" + data + "], \"id\": 1}";
     httpclient.begin(http);
     httpclient.POST(testjsonrpccall);
     //Examples used as reference: https://www.jsonrpc.org/specification
@@ -149,7 +153,30 @@ void sendJsonRPCRequest(string name) {
             if(payload.find(data) != npos) {
                 Serial.println("Transmitted successfully");
                 //TODO uncomment once done testing
-                //clearData(name);
+                //Remove sent data
+                /*
+                for(int i = 0; i < 4; i++) {
+                    //TODO Update to correct name strings and correct order
+                    if(i == 0;) {
+                        name = "temp";
+                    } else if(i == 1) {
+                        name = "mois";
+                    } else if(i == 2) {
+                        name = "phos";
+                    } else {
+                        name = "sun";
+                    }
+
+                    //open up datapoint's namespace in read/write mode
+                    prefs.begin(name, true);
+
+                    prefs.remove(to_string(sendCount));
+                    prefs.end();
+                }
+                */
+                //Increment sendCount
+                sendCount++;
+                sendCount %= DATAPOINT_COUNT_LIMIT;
             }
         }
     } else {
