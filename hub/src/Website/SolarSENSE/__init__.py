@@ -4,8 +4,8 @@ from rpc4django import rpcmethod
 def ping():
     return "pong"
 
-@rpcmethod(name='setTemp', signature=['array'])
-def setTemp(request, inputArr):
+@rpcmethod(name='setSensorData', signature=['array'])
+def setSensorData(request, inputArr):
     from .models import SensorCollections
 
     if len(inputArr) == 4:
