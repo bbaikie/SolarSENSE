@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+
+.views-popup-window {
+	border: black solid 1px;
+	padding: 4px 8px;
+	display: none;
+	z-index: 100;
+	background: white;
+	position: fixed;
+	white-space: nowrap;
+}
+
+.views-popup-window .views-label {
+    display:block;
+    font-size:150%;
+    font-weight:bold;
+}
+
+span.views-popup-item {
+    margin-right: 4px;
+}
+
+.views-popup-window-translucent {
+	background:url("../images/background50.png") repeat scroll 0 0 transparent;	
+}
+
+.views-popup-window-shadow {
+    box-shadow: 5px 5px 8px #888888;
+}
+
+.views-popup-window-close-button {
+	position: absolute;
+	top:  -1px;
+	left: -18px;
+    width: 16px;
+	height: 16px;
+	border: 1px solid black;
+	background:url("../images/close.png") repeat scroll 0 0 #FFFFFF;
+}

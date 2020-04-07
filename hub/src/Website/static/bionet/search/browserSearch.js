@@ -1,14 +1,12 @@
-(function($) {
-
-
+(function ($) {
   let searchIndex = lunr.Index.load(index.index);
   let results;
 
-  const body = document.querySelector('.container');
+  const body = document.querySelector(".container");
 
-  const searchInput = document.createElement('input');
-  const button = document.createElement('button');
-  const resultsBox = document.createElement('ul');
+  const searchInput = document.createElement("input");
+  const button = document.createElement("button");
+  const resultsBox = document.createElement("ul");
 
   button.textContent = "Search";
 
@@ -22,22 +20,22 @@
     let results = searchIndex.search(searchParam);
 
     results.forEach((result) => {
-      const item = data.store[result.ref]
+      const item = data.store[result.ref];
 
-      const li = document.createElement('li');
-      const div = document.createElement('div');
-      const a = document.createElement('a');
+      const li = document.createElement("li");
+      const div = document.createElement("div");
+      const a = document.createElement("a");
       a.href = item.href;
       a.target = "_BLANK";
 
-      const h3 = document.createElement('h3');
+      const h3 = document.createElement("h3");
       h3.textContent = item.title;
 
       a.appendChild(h3);
 
       div.appendChild(a);
 
-      const p = document.createElement('p');
+      const p = document.createElement("p");
       p.textContent = item.content;
 
       div.appendChild(p);
@@ -46,6 +44,5 @@
 
       resultsBox.appendChild(li);
     });
-  }
-
+  };
 })(jQuery);

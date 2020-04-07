@@ -25,7 +25,7 @@ SECRET_KEY = '%^$_u_k)tt69ys&3pnawe8cuulxgbj#f$hvt#^(dupd&)t%r6w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.2', '192.168.4.1']
+ALLOWED_HOSTS = ['192.168.2.2', '192.168.4.1','127.0.0.1']
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # Application definition
@@ -125,5 +125,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_files')]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
