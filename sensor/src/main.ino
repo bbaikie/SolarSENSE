@@ -32,7 +32,7 @@ void loop() {
         Serial.println("Connected to wifi");
         //connected to wifi
 
-        sendJsonRPCRequest("temp");
+        sendJsonRPCRequest();
 
         //TODO these functions may need no have jsonrpc stuff passed to them so they can transmit properly
         /*
@@ -43,6 +43,7 @@ void loop() {
         */
     } else {
         Serial.println("Not connected to wifi");
+        connectToWifi(ssid, password);
     }
 
     //Go into low power mode for 6 minutes

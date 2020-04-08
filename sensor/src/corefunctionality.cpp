@@ -5,7 +5,7 @@ HTTPClient httpclient;
 
 #define DATAPOINT_COUNT_LIMIT 20
 
-static const String host = "http://192.168.4.1";
+static const String host = "http://192.168.4.1/RPC2";
 static unsigned char sendCount = 0;
 
 void activateLowPowerMode(int sleepSeconds){
@@ -86,101 +86,112 @@ void connectToWifi(const char* ssid, const char* password) {
     }
 }
 
-string getDataAsArrayString() {
+String getDataAsArrayString() {
     /*
      * TODO uncomment when merged with other preferences changes
-    string data = "";
-    string name;
+    String data = "";
+    String name;
     unsigned short tempData;
 
     for(int i = 0; i < 4; i++) {
-        //TODO Update to correct name strings and correct order
+        //TODO Update to correct name Strings and correct order
+        //Order must be moisture, temperature, sunlight, phosphate
         if(i == 0;) {
-            name = "temp";
-        } else if(i == 1) {
             name = "mois";
+        } else if(i == 1) {
+            name = "temp";
         } else if(i == 2) {
-            name = "phos";
-        } else {
             name = "sun";
+        } else {
+            name = "phos";
         }
+        data+= "\"";
 
         //open up datapoint's namespace in read only mode
         prefs.begin(name, true);
 
-        tempData = prefs.getUShort(to_string(sendCount));
-        //TODO Convert according to datatype
-        data += to_string(tempData);
-        //Ensure all values are a double until we properly convert them
-        //TODO remove when possible
-        data += ".0";
+        tempData = prefs.getUShort(to_String(sendCount));
+
+        prefs.end();
+
+        //TODO Convert to double according to datatype
+        data += to_String(tempData);
 
         //add comma and space after all elements except the last one
         if(i < (4-1)) {
             data += ", ";
         }
-
-        prefs.end();
+        data+= "\"";
     }
 
     return data;
     */
 
-    return "3.1, 4.2, 5.3, 6.4";
+    //TODO delete this sample return
+    return "\"3.1\", \"4.2\", \"5.3\", \"6.4\"";
 }
 
 void sendJsonRPCRequest() {
-    string data = getDataAsArrayString(name);
+    String data = getDataAsArrayString();
 
     //no data to be sent
     if(data == "") {
         return;
     }
 
-    String http = host + ":8080/json/";
 
-    String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"TODOFILLINFUNCNAME\", \"params\": [" + data + "], \"id\": 1}";
-    httpclient.begin(http);
-    httpclient.POST(testjsonrpccall);
     //Examples used as reference: https://www.jsonrpc.org/specification
+    String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"setSensorData\", \"params\": [[" + data + "]], \"id\": 1}";
+    Serial.println("Sending following http request to " + host);
+    Serial.println(testjsonrpccall);
 
-    int httpcode = httpclient.GET();
-
+    httpclient.begin(host);
+    int httpcode = httpclient.POST(testjsonrpccall);
     if (httpcode > 0) {
+        Serial.println("httpcode is > 0. payload:");
+        String payload = httpclient.getString();
+        Serial.println(payload);
         if(httpcode == HTTP_CODE_OK) {
-            String payload = httpclient.getString();
-            Serial.println(payload);
-            if(payload.find(data) != npos) {
-                Serial.println("Transmitted successfully");
-                //TODO uncomment once done testing
+            Serial.println("end payload. httpcode is OK");
+
+            if(payload.indexOf("\"result\": true") != -1) {
+                Serial.println("Hub received data successfully!");
                 //Remove sent data
-                /*
+                /* TODO uncomment when preferences stuff is sorted out
                 for(int i = 0; i < 4; i++) {
-                    //TODO Update to correct name strings and correct order
                     if(i == 0;) {
-                        name = "temp";
-                    } else if(i == 1) {
                         name = "mois";
+                    } else if(i == 1) {
+                        name = "temp";
                     } else if(i == 2) {
-                        name = "phos";
-                    } else {
                         name = "sun";
+                    } else {
+                        name = "phos";
                     }
 
                     //open up datapoint's namespace in read/write mode
                     prefs.begin(name, true);
 
-                    prefs.remove(to_string(sendCount));
+                    prefs.remove(to_String(sendCount));
                     prefs.end();
                 }
-                */
                 //Increment sendCount
                 sendCount++;
                 sendCount %= DATAPOINT_COUNT_LIMIT;
+                prefs.begin("counts", true);
+                //TODO update stored sendcount
+                prefs.end();
+                */
+            } else {
+                Serial.println("Hub didn't receive data successfully");
             }
+        } else {
+            Serial.println("end payload. httpcode is not OK");
         }
+
     } else {
-        Serial.println("Error");
+        Serial.println("POST failed. Error:");
+        Serial.println(httpclient.errorToString(httpcode).c_str());
     }
 
     httpclient.end();
