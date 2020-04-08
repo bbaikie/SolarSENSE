@@ -26,6 +26,12 @@
  */
 void activateLowPowerMode(int sleepSeconds);
 
+void initialize(const char* ssid, const char* password);
+
+void incrementCount();
+
+void sendAllData();
+
 /**
  * sampleAndStoreTemperature()
  *
