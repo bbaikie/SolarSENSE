@@ -86,30 +86,34 @@ void storeData(const char* name, uint16_t data) {
 
 void sampleAndStoreTemperature(){
     //Pin A1 is also gpio #25 and ADC2
+    //TODO confirm that this is the correct pin to read from
     uint16_t adc_value = analogRead(25);
-    Serial.println(adc_value);
+    //Serial.println(adc_value);
 
     storeData(TEMPERATURE, adc_value);
 }
 
 void sampleAndStoreMoisture(){
     /* uses GPIO 26 and ADC #2*/
+    //TODO confirm that this is the correct pin to read from
     uint16_t adc_moist = analogRead(26);
-    Serial.println(adc_moist);
+    //Serial.println(adc_moist);
 
     storeData(MOISTURE, adc_moist);
 }
 
 void sampleAndStorePhosphate(){
+    //TODO confirm that this is the correct pin to read from
     uint16_t adc_phos = analogRead(26);
-    Serial.println(adc_phos);
+    //Serial.println(adc_phos);
 
     storeData(PHOSPHATE, adc_phos);
 }
 
 void sampleAndStoreSunlight(){
+    //TODO confirm that this is the correct pin to read from
     uint16_t adc_sun = analogRead(27);
-    Serial.println(adc_sun);
+    //Serial.println(adc_sun);
 
     storeData(SUNLIGHT, adc_sun);
 }
@@ -216,20 +220,20 @@ void sendJsonRPCRequest() {
 
     //Examples used as reference: https://www.jsonrpc.org/specification
     String testjsonrpccall = "{\"jsonrpc\": \"2.0\", \"method\": \"setSensorData\", \"params\": [[" + data + "]], \"id\": 1}";
-    Serial.println("Sending following http request to " + host);
-    Serial.println(testjsonrpccall);
+    //Serial.println("Sending following http request to " + host);
+    //Serial.println(testjsonrpccall);
 
     httpclient.begin(host);
     int httpcode = httpclient.POST(testjsonrpccall);
     if (httpcode > 0) {
-        Serial.println("httpcode is > 0. payload:");
+        //Serial.println("httpcode is > 0. payload:");
         String payload = httpclient.getString();
-        Serial.println(payload);
+        //Serial.println(payload);
         if(httpcode == HTTP_CODE_OK) {
-            Serial.println("end payload. httpcode is OK");
+            //Serial.println("end payload. httpcode is OK");
 
             if(payload.indexOf("\"result\": true") != -1) {
-                Serial.println("Hub received data successfully!");
+                //Serial.println("Hub received data successfully!");
                 //Remove sent data
                 for(int i = 0; i < DATATYPE_COUNT; i++) {
                     if(i == 0) {
@@ -255,15 +259,15 @@ void sendJsonRPCRequest() {
                 prefs.putUChar("send", sendCount);
                 prefs.end();
             } else {
-                Serial.println("Hub didn't receive data successfully");
+                //Serial.println("Hub didn't receive data successfully");
             }
         } else {
-            Serial.println("end payload. httpcode is not OK");
+            //Serial.println("end payload. httpcode is not OK");
         }
 
     } else {
-        Serial.println("POST failed. Error:");
-        Serial.println(httpclient.errorToString(httpcode).c_str());
+        //Serial.println("POST failed. Error:");
+        //Serial.println(httpclient.errorToString(httpcode).c_str());
     }
 
     httpclient.end();

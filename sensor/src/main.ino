@@ -11,8 +11,8 @@ const char* ssid = "NameOfNetwork";
 const char* password = "AardvarkBadgerHedgehog";
 
 void setup() {
-    //TODO REMOVE all SERIAL STUFF
-    Serial.begin(115200);
+    //Serial output is disabled for release, but it can be enabled for debugging
+    //Serial.begin(115200);
     delay(1000);
     initialize(ssid, password);
 
@@ -25,10 +25,10 @@ void setup() {
     connectToWifi(ssid, password);
 
     if (WiFi.isConnected()) {
-        Serial.println("Connected to wifi");
+        //Serial.println("Connected to wifi");
         sendAllData();
     } else {
-        Serial.println("Not connected to wifi");
+        //Serial.println("Not connected to wifi");
     }
 
     //Go into low power mode for amount of time
