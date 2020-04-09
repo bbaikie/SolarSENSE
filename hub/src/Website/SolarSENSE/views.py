@@ -87,7 +87,7 @@ def stats(request):
     context = {
         "query":sensorQuery 
     }
-    render(request,'stats.html',context)  
+    return render(request,'stats.html',context)  
 
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
