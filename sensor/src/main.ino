@@ -24,9 +24,8 @@ void setup() {
 
     connectToWifi(ssid, password);
 
-    if (WiFi.status() == WL_CONNECTED) {
+    if (WiFi.isConnected()) {
         Serial.println("Connected to wifi");
-
         sendAllData();
     } else {
         Serial.println("Not connected to wifi");

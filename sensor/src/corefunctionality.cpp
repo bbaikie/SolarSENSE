@@ -5,6 +5,11 @@ HTTPClient httpclient;
 
 #define DATAPOINT_COUNT_LIMIT 24
 
+#define MOISTURE "mois"
+#define TEMPERATURE "temp"
+#define SUNLIGHT "sun"
+#define PHOSPHATE "ph"
+
 #define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
 
 //for types of data: moisture, temperature, sunlight, phosphate
@@ -21,6 +26,7 @@ void activateLowPowerMode(int sleepSeconds){
     esp_sleep_enable_timer_wakeup(sleepSeconds * uS_TO_S_FACTOR);
 
     //Start deep sleep
+    //https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/DeepSleep/TimerWakeUp/TimerWakeUp.ino
     Serial.flush();
     esp_deep_sleep_start();
 }
@@ -39,13 +45,16 @@ void incrementCount() {
     prefs.begin("counts", false);
     sendCount = prefs.getUChar("send", sendCount);
     storeCount = prefs.getUChar("store", storeCount);
+
     if(storeCount == (sendCount - 1) || (sendCount == 0 && storeCount == DATAPOINT_COUNT_LIMIT)) {
         sendCount++;
         sendCount %= DATAPOINT_COUNT_LIMIT;
         prefs.putUChar("send", sendCount);
     }
+
     storeCount++;
     storeCount %= DATAPOINT_COUNT_LIMIT;
+
     prefs.putUChar("store", sendCount);
     prefs.end();
 }
@@ -76,39 +85,33 @@ void storeData(const char* name, uint16_t data) {
 }
 
 void sampleAndStoreTemperature(){
-    //pin A1 uses ADC2
-    //Pin A1 is also gpio #25
+    //Pin A1 is also gpio #25 and ADC2
     uint16_t adc_value = analogRead(25);
     Serial.println(adc_value);
 
-    storeData("temp", adc_value);
+    storeData(TEMPERATURE, adc_value);
 }
 
 void sampleAndStoreMoisture(){
     /* uses GPIO 26 and ADC #2*/
-
-    /*this samples the  value from the sensor*/
     uint16_t adc_moist = analogRead(26);
     Serial.println(adc_moist);
 
-    storeData("mois", adc_moist);
+    storeData(MOISTURE, adc_moist);
 }
 
 void sampleAndStorePhosphate(){
-    
     uint16_t adc_phos = analogRead(26);
     Serial.println(adc_phos);
 
-    storeData("phos", adc_phos);
-        
+    storeData(PHOSPHATE, adc_phos);
 }
 
 void sampleAndStoreSunlight(){
-    
     uint16_t adc_sun = analogRead(27);
     Serial.println(adc_sun);
 
-    storeData("sun", adc_sun);
+    storeData(SUNLIGHT, adc_sun);
 }
 
 void turnOffWiFi() { 
@@ -121,7 +124,8 @@ void turnOnWifi() {
 
 void connectToWifi(const char* ssid, const char* password) {
     turnOnWifi();
-    // We start by connecting to a WiFi network
+
+    //connect to a WiFi network
     WiFi.begin(ssid, password);
 
     //Wait for a connection for 10 minutes, or 600 seconds
@@ -147,16 +151,15 @@ String getDataAsArrayString() {
     unsigned short tempData;
 
     for(int i = 0; i < DATATYPE_COUNT; i++) {
-        //TODO Update to correct name Strings and correct order
         //Order must be moisture, temperature, sunlight, phosphate
         if(i == 0) {
-            name = "mois";
+            name = MOISTURE;
         } else if(i == 1) {
-            name = "temp";
+            name = TEMPERATURE;
         } else if(i == 2) {
-            name = "sun";
+            name = SUNLIGHT;
         } else {
-            name = "phos";
+            name = PHOSPHATE;
         }
         data += "\"";
 
@@ -197,6 +200,10 @@ void sendAllData() {
         loopCount = (DATAPOINT_COUNT_LIMIT - sendCount) + storeCount;
     }
 
+    if(loopCount > DATAPOINT_COUNT_LIMIT) {
+        loopCount = DATAPOINT_COUNT_LIMIT;
+    }
+
     for(int i = 0; i < loopCount; i++) {
         sendJsonRPCRequest();
     }
@@ -231,13 +238,13 @@ void sendJsonRPCRequest() {
                 //Remove sent data
                 for(int i = 0; i < DATATYPE_COUNT; i++) {
                     if(i == 0) {
-                        name = "mois";
+                        name = MOISTURE;
                     } else if(i == 1) {
-                        name = "temp";
+                        name = TEMPERATURE;
                     } else if(i == 2) {
-                        name = "sun";
+                        name = SUNLIGHT;
                     } else {
-                        name = "phos";
+                        name = PHOSPHATE;
                     }
 
                     //open up datapoint's namespace in read/write mode
