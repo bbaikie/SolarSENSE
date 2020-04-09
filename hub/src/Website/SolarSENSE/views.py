@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from SolarSENSE.models import Video
+from SolarSENSE.models import Video, SensorCollections
 from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
 from django.contrib.contenttypes.models import ContentType
@@ -82,6 +82,9 @@ def changeTags(request):
                 video.tags.add(tag)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
+def stats(request):
+    sensorQuery = SensorCollections.objects.all() 
+    render(request,'stats.html',sensorQuery)  
     
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
