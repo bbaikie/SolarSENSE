@@ -1,0 +1,22 @@
+{% extends 'root.html' %}
+{% block content %}
+<h1>Statistics for Collected Data</h1>
+    <table>
+        <tr>
+            <th>Time Stamp</th>
+            <th>Moisture</th>
+            <th>Temperature</th>
+            <th>Sunlight</th>
+            <th>Phosphate</th>
+        </tr>
+        {% for item in query %}
+        <tr> 
+            <td>{{ item.date_time }}</td>
+            <td>{{ item.moisture }}</td>
+            <td>{{ item.temperature }}</td>
+            <td>{{ item.sunlight }}</td>
+            <td>{{ item.phosphate }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock content %}
