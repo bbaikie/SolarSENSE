@@ -98,8 +98,6 @@ void transmitStoredSunlight();
 
 void turnOffWiFi();
 
-void turnOnWifi();
-
 void connectToWifi(const char* ssid, const char* password);
 
 void sendJsonRPCRequest();

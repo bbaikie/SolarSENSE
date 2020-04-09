@@ -115,16 +115,11 @@ void sampleAndStoreSunlight(){
 }
 
 void turnOffWiFi() { 
-    WiFi.mode(WIFI_OFF);
-}
-
-void turnOnWifi() {
-    WiFi.enableSTA(true);
+    //disconnect from wifi
+    WiFi.disconnect(true, false);
 }
 
 void connectToWifi(const char* ssid, const char* password) {
-    turnOnWifi();
-
     //connect to a WiFi network
     WiFi.begin(ssid, password);
 
