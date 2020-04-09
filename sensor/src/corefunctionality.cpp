@@ -3,7 +3,9 @@
 Preferences prefs;
 HTTPClient httpclient;
 
-#define DATAPOINT_COUNT_LIMIT 20
+#define DATAPOINT_COUNT_LIMIT 24
+
+#define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
 
 //for types of data: moisture, temperature, sunlight, phosphate
 #define DATATYPE_COUNT 4
@@ -13,17 +15,23 @@ static unsigned char sendCount = 0;
 static unsigned char storeCount = 0;
 
 void activateLowPowerMode(int sleepSeconds){
-    //TODO fill in
-    
-    //turn off wifi (figure out how to call turnOffWiFi from turn_Off_WiFi.cpp)
     turnOffWiFi();
 
-    //put sensor to sleep
-    //TODO we should research if this is the best way to put the sensor to sleep
-    sleep(sleepSeconds);
+    //configure esp to wake from deep sleep after specified time
+    esp_sleep_enable_timer_wakeup(sleepSeconds * uS_TO_S_FACTOR);
+
+    //Start deep sleep
+    Serial.flush();
+    esp_deep_sleep_start();
 }
 
 void initialize(const char* ssid, const char* password) {
+    //Make sure counts are correct
+    prefs.begin("counts", true);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+    prefs.end();
+
     connectToWifi(ssid, password);
 }
 
@@ -116,8 +124,10 @@ void connectToWifi(const char* ssid, const char* password) {
     // We start by connecting to a WiFi network
     WiFi.begin(ssid, password);
 
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+    //Wait for a connection for 10 minutes, or 600 seconds
+    for(int i = 0; i < 600 && WiFi.status() != WL_CONNECTED; i++) {
+        //delay one second
+        delay(1000);
     }
 }
 

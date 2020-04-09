@@ -5,6 +5,8 @@
 #include <HTTPClient.h>
 #include <Preferences.h>
 
+#define TIME_TO_SLEEP  3600        /* Time ESP32 will go to sleep (in seconds) */
+
 const char* ssid = "NameOfNetwork";
 const char* password = "AardvarkBadgerHedgehog";
 
@@ -13,9 +15,7 @@ void setup() {
     Serial.begin(115200);
     delay(1000);
     initialize(ssid, password);
-}
 
-void loop() {
     sampleAndStoreTemperature();
     sampleAndStoreMoisture();
     sampleAndStorePhosphate();
@@ -32,8 +32,10 @@ void loop() {
         Serial.println("Not connected to wifi");
     }
 
-    //Go into low power mode for 6 minutes
-    //TODO find better low power mode time
-    //activateLowPowerMode(600);
-    delay(10000);
+    //Go into low power mode for amount of time
+    activateLowPowerMode(TIME_TO_SLEEP);
+}
+
+//This function will not be called, since the sensor just wakes up, does it's stuff, and goes back to sleep
+void loop() {
 }
