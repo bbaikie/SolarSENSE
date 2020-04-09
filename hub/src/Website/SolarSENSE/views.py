@@ -84,8 +84,11 @@ def changeTags(request):
 
 def stats(request):
     sensorQuery = SensorCollections.objects.all() 
-    render(request,'stats.html',sensorQuery)  
-    
+    context = {
+        "query":sensorQuery 
+    }
+    render(request,'stats.html',context)  
+
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
