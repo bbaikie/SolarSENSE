@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'taggit',
     'django_extensions',
     'django_cleanup.apps.CleanupConfig',
-    'jsonrpc',
+    'rpc4django',
 ]
 
 MIDDLEWARE = [
