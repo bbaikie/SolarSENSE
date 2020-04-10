@@ -35,6 +35,7 @@ def storeTemp(request, temperature):
 	#How to loop through and save as different data objects? or do 
 	#we want to do that?
 
+"""
 @jsonrpc_method('main.sendMoistureData')
 def storeMoisture(request, moisture):
     #database.add(moisture)
@@ -53,6 +54,7 @@ def storeSunlight(request, sunlight):
 #@method
 #def storeSunlight(sunlight):
     #return bool
+"""
 
 # Starts instance of server
 if __name__ == "__main__":
