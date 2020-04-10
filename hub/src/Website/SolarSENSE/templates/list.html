@@ -13,7 +13,7 @@
         {% endif %}
 
         {% for number in page_obj.paginator.page_range %}
-            <li class='page-item'><a class="page-link" href="?page={{ number }}">
+            <li class='page-item'><a class="page-link" href="?page={{ number }}"> {{ number }}</a></li>
         {% endfor %}
 
         {% comment %} <span>
