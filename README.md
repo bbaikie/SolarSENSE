@@ -112,3 +112,24 @@ To access the internet add a wifi network following [these](https://www.raspberr
 * Nginx Error Logs: `sudo less /var/log/nginx/error.log`
 * Gunicorn Application Log: `sudo journalctl -u gunicorn`
 * Gunicorn Socket Log: `sudo journalctl -u gunicorn.socket`
+
+## Setting up the dev environment for programming the sensor
+### Install Arduino IDE (necessary whether you're building and flashing with it or not)
+1. Install the latest version of the the [Arduino IDE](https://www.arduino.cc/en/main/software)
+2. Follow the instructions for adding the ESP32 libraries to Arduino IDE, either using Arduino IDE Boards Manager or adding the development repository. Those instructions can be found in the ESP32 github repo README.md: https://github.com/espressif/arduino-esp32
+
+### Building and flashing the sensor code
+#### Building and flashing using Arduino IDE 
+1. Clone this github repo at https://github.com/jeremiah-miller/SolarSENSE.git
+2. Open Arduino IDE and open the file "<Repo dir>/sensor/src/main.ino"
+3. It will tell you that you need to open it in a folder called "main" and offer to make the folder and move it for you. Let it do that
+4. Copy all other files in "sensor/src/" into the new "sensor/src/main/" folder
+5. To build the code, click the check mark/"Verify" button in Arduino IDE
+6. To flash the code to the sensor, click the right arrow/"Upload" button in Arduino IDE
+7. NOTE: if you use this method, you will need to copy any files you edit from the "sensor/src/main/" folder back into the "sensor/src/" folder, and commit those instead of the files in "sensor/src/main", in order to preserve the github file structure
+
+#### Building and flashing using the Makefile
+1. Clone this github repo at https://github.com/jeremiah-miller/SolarSENSE.git
+2. From a bash terminal, navigate to where you cloned the repo
+3. To build the code, run `make sensor`
+4. To flash the code to the sensor, run `make flash_sensor`
