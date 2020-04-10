@@ -10,6 +10,32 @@ HTTPClient httpclient;
 #define SUNLIGHT "sun"
 #define PHOSPHATE "ph"
 
+//TODO confirm that these are the correct pins to read from
+#define MOISTURE_PIN 26
+#define TEMPERATURE_PIN 25
+#define SUNLIGHT_PIN 27
+#define PHOSPHATE_PIN 26
+
+#define NUM_SAMPLES 5
+
+//TODO THIS NEEDS TO BE UPDATED BASED ON CALIBRATION WITH MOISTURE DATA
+//These are just copied from the link below, they should not be used in the end product but based on calibration
+//https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193#target_0
+#define MOISTURE_DRY 520
+#define MOISTURE_WET 260
+
+//TODO THIS MAY BE INCORRECT WITH THE FINAL HARDWARE DESIGN
+//See this source and check out how they found the value that should be here. They call it SERIESRESISTOR
+//https://learn.adafruit.com/thermistor/using-a-thermistor
+#define TEMPERATURE_OTHER_RESISTOR 10000
+// resistance at 25 degrees C
+#define THERMISTOR_NOMINAL 10000
+// The beta coefficient of the thermistor (usually 3000-4000)
+#define BCOEFFICIENT 3950
+// temp. for nominal resistance (almost always 25 C)
+#define TEMPERATURE_NOMINAL 25
+
+
 #define uS_TO_S_FACTOR 1000000ULL  /* Conversion factor for micro seconds to seconds */
 
 //for types of data: moisture, temperature, sunlight, phosphate
@@ -85,37 +111,65 @@ void storeData(const char* name, uint16_t data) {
 }
 
 void sampleAndStoreTemperature(){
-    //Pin A1 is also gpio #25 and ADC2
-    //TODO confirm that this is the correct pin to read from
-    uint16_t adc_value = analogRead(25);
-    //Serial.println(adc_value);
+    //https://learn.adafruit.com/thermistor/using-a-thermistor
+    uint16_t average = analogRead(TEMPERATURE_PIN);
 
-    storeData(TEMPERATURE, adc_value);
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(TEMPERATURE_PIN);
+        average /= 2;
+        delay(10);
+    }
+
+    //Serial.println(average);
+
+    storeData(TEMPERATURE, average);
 }
 
 void sampleAndStoreMoisture(){
-    /* uses GPIO 26 and ADC #2*/
-    //TODO confirm that this is the correct pin to read from
-    uint16_t adc_moist = analogRead(26);
-    //Serial.println(adc_moist);
+    uint16_t average = analogRead(MOISTURE_PIN);
 
-    storeData(MOISTURE, adc_moist);
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(MOISTURE_PIN);
+        average /= 2;
+        delay(10);
+    }
+    //Serial.println(average);
+
+    storeData(MOISTURE, average);
 }
 
 void sampleAndStorePhosphate(){
-    //TODO confirm that this is the correct pin to read from
-    uint16_t adc_phos = analogRead(26);
-    //Serial.println(adc_phos);
+    uint16_t average = analogRead(PHOSPHATE_PIN);
 
-    storeData(PHOSPHATE, adc_phos);
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(PHOSPHATE_PIN);
+        average /= 2;
+        delay(10);
+    }
+    //Serial.println(average);
+
+    storeData(PHOSPHATE, average);
 }
 
 void sampleAndStoreSunlight(){
-    //TODO confirm that this is the correct pin to read from
-    uint16_t adc_sun = analogRead(27);
-    //Serial.println(adc_sun);
+    uint16_t average = analogRead(SUNLIGHT_PIN);
 
-    storeData(SUNLIGHT, adc_sun);
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(SUNLIGHT_PIN);
+        average /= 2;
+        delay(10);
+    }
+    //Serial.println(average);
+
+    storeData(SUNLIGHT, average);
 }
 
 void turnOffWiFi() { 
@@ -148,6 +202,7 @@ String getDataAsArrayString() {
     String data = "";
     String name;
     unsigned short tempData;
+    float final_data;
 
     for(int i = 0; i < DATATYPE_COUNT; i++) {
         //Order must be moisture, temperature, sunlight, phosphate
@@ -170,7 +225,39 @@ String getDataAsArrayString() {
         prefs.end();
 
         //TODO Convert to double according to datatype
-        data += String(tempData).c_str();
+        if(i == 0) {
+            //Moisture
+            //TODO need to get calibration data before being able to get a percentage, see following link
+            //https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193#target_0
+            //Also, calculation to convert from raw value to percentage are just guesstimates based on data from the above link and are likely not accurate. More research is needed
+            tempData -= MOISTURE_WET;
+            //Get percent dry
+            final_data = tempData / (MOISTURE_DRY - MOISTURE_WET);
+            //Invert to get percent wet
+            final_data = 1 - final_data;
+        } else if(i == 1) {
+            //Temperature
+            //https://learn.adafruit.com/thermistor/using-a-thermistor calculations from here
+            //Converts temperature to degrees celcius
+            final_data = 1023 / tempData - 1;
+            final_data = TEMPERATURE_OTHER_RESISTOR / final_data;
+
+            final_data = final_data / THERMISTOR_NOMINAL;
+            final_data = log(final_data);
+            final_data /= BCOEFFICIENT;
+            final_data += 1.0 / (TEMPERATURE_NOMINAL + 273.15);
+            final_data = 1.0 / final_data;
+            final_data -= 273.15;
+        } else if(i == 2) {
+            //Sunlight
+            //TODO Find out how to calculate this data
+            final_data = tempData;
+        } else {
+            //Phosphate
+            //TODO Find out how to calculate this data
+            final_data = tempData;
+        }
+        data += String(final_data).c_str();
 
         //add comma and space after all elements except the last one
         if(i < (DATATYPE_COUNT-1)) {
