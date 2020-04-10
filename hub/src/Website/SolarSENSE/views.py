@@ -5,6 +5,7 @@ from SolarSENSE.models import Video
 from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
 from django.contrib.contenttypes.models import ContentType
+from django.views.generic import ListView
 
 def test(request):
     return HttpResponse('This is a test page')
@@ -15,6 +16,11 @@ def templateTest(request):
         "media":mediaImage
     }
     return render(request, "templateTest.html", context)
+
+class VideosView(ListView):
+    paginate_by = 7
+    model = Video
+    template_name = "list.html"
 
 def tagTest(request):
     context = {}
