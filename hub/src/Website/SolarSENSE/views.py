@@ -83,6 +83,7 @@ def changeTags(request):
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
 def stats(request):
+  
     sensorQuery = SensorCollections.objects.all() 
     context = {
         "query":sensorQuery 
