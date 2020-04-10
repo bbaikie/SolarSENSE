@@ -1,277 +1,609 @@
-#include "corefunctionality.h"
+/*
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+/*******************************************************************************
+ * corefunctionality.cpp
+ *
+ * SolarSENSE
+ * Fall 2019 - Spring 2020
+ * Written by: Jeremiah Miller and Joshua Paragoso
+ * Modified by:
+ *
+ * This file contains the implementation of all the custom functions the sensor
+ * needs
+ *
+ * NOTE: Feel free to reach out with questions to Jeremiah at jpm@hiya.ca
+ */
+
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
+#include <Preferences.h>
 
 Preferences prefs;
+HTTPClient httpclient;
 
-void activateLowPowerMode(int sleepSeconds){
-    //TODO fill in
-    
-    //turn off wifi (figure out how to call turnOffWiFi from turn_Off_WiFi.cpp)
-    turnOffWiFi();
+#define DATAPOINT_COUNT_LIMIT 24
 
-    //put sensor to sleep
-    //TODO we should research if this is the best way to put the sensor to sleep
-    sleep(sleepSeconds);
+#define MOISTURE "mois"
+#define TEMPERATURE "temp"
+#define SUNLIGHT "sun"
+#define PHOSPHATE "ph"
+
+//TODO confirm that these are the correct pins to read from
+#define MOISTURE_PIN 26
+#define TEMPERATURE_PIN 25
+#define SUNLIGHT_PIN 27
+#define PHOSPHATE_PIN 26
+
+#define NUM_SAMPLES 5
+
+//TODO THIS NEEDS TO BE UPDATED BASED ON CALIBRATION WITH MOISTURE DATA
+//These are just copied from the link below, they should not be used in the
+//end product but based on calibration
+//https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193#target_0
+#define MOISTURE_DRY 520
+#define MOISTURE_WET 260
+
+//TODO THIS MAY BE INCORRECT WITH THE FINAL HARDWARE DESIGN
+//See this source and check out how they found the value that should be here.
+//They call it SERIESRESISTOR
+//https://learn.adafruit.com/thermistor/using-a-thermistor
+#define TEMPERATURE_OTHER_RESISTOR 10000
+// resistance at 25 degrees C
+#define THERMISTOR_NOMINAL 10000
+// The beta coefficient of the thermistor (usually 3000-4000)
+#define BCOEFFICIENT 3950
+// temp. for nominal resistance (almost always 25 C)
+#define TEMPERATURE_NOMINAL 25
+
+
+//Conversion factor for micro seconds to seconds
+#define uS_TO_S_FACTOR 1000000ULL
+
+//for types of data: moisture, temperature, sunlight, phosphate
+#define DATATYPE_COUNT 4
+
+#define HOST "http://192.168.4.1/RPC2"
+static unsigned char sendCount = 0;
+static unsigned char storeCount = 0;
+
+/*******************************************************************************
+ * turnOffWiFi()
+ *
+ * This code disconnects from wifi and then turns off wifi functionality
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   Turns off the wifi hardware
+ *
+ * NOTE:
+ */
+static void turnOffWiFi() { 
+    //disconnect from wifi
+    WiFi.disconnect(true, false);
 }
 
-void sampleAndStoreTemperature(){
-    //pin A1 uses ADC2
-    //Pin A1 is also gpio #25
-    uint16_t adc_value = analogRead(25);
-    Serial.println(adc_value);
+/*******************************************************************************
+ * storeData(const char* name, uint16_t data)
+ *
+ * This function stores the data it receives in the Preferences library of the
+ * ESP32
+ *
+ * arguments:
+ *   name - the name of the datatype received. Should use the #defined names at
+ *          the top to pass this in
+ *   data - the 16 bits of data to store
+ *
+ * returns:
+ *
+ * changes:
+ *   Stores the data in the eeprom using the preferences library
+ *
+ * NOTE: Used the eeprom library so we'd get wear leveling automatically
+ */
+static void storeData(const char* name, uint16_t data) {
+    uint16_t latest_data = data;
 
-    //need to set temp to invalid when we transmit temperature data successfully
-    if(prefs.getBool("temp_is_valid")) {
-        size_t arr_length;
+    //Make sure counts are correct
+    prefs.begin("counts", true);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+    prefs.end();
 
-        //Storing data as raw adc value int, need to convert to celcius before sending to hub
-        prefs.begin("temp"); // Use the temperature ("temp") preferences namespace
+    //open up datapoint's namespace in rw mode
+    prefs.begin(name, false);
 
-        //get size of currently stored array
-        arr_length = prefs.getBytesLength("temp");
+    //if data is already stored, need to average it with new data
+    if(prefs.getUShort(String(storeCount).c_str())) {
+        latest_data += prefs.getUShort(String(storeCount).c_str());
+        latest_data /= 2;
+    }
 
-        //set up array for adding a datapoint, with 2 extra slots for the 2 bytes of the freshly read value (since it's 16 bit/2 byte)
-        uint8_t temperature_data[arr_length + 2];
+    //Put latest piece of data
+    prefs.putUShort(String(storeCount).c_str(), latest_data);
 
-        //get old data, so we don't overwrite/lose it
-        prefs.getBytes("temp", temperature_data, arr_length);
+    //close datapoint namespace
+    prefs.end();
+}
 
-        //most significant 8 stored bits first
-        temperature_data[arr_length] = (uint8_t) adc_value >> 8;
-        //then the least significant 8 bits
-        temperature_data[arr_length + 1] = (uint8_t) (adc_value & 0xFF);
+/*******************************************************************************
+ * getDataAsArrayString()
+ *
+ * This function gets the current array of data in the form of a string to send
+ * with jsonrpc. It also converts all data from the raw value before adding it
+ * to the string
+ *
+ * arguments:
+ *
+ * returns:
+ *   array of data to be sent
+ *
+ * changes:
+ *
+ * NOTE: Data is stored as a raw value from the ADC. We have to convert it here
+ * before sending it to the hub
+ */
+static String getDataAsArrayString() {
+    //Make sure counts are correct
+    prefs.begin("counts", true);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+    prefs.end();
+    if(sendCount == storeCount) {
+        return "";
+    }
 
-        //store the new data
-        prefs.putBytes("temp", temperature_data, (arr_length + 2)*sizeof(uint8_t));
+    //output should be formatted like this: "\"3.1\", \"4.2\", \"5.3\", \"6.4\""
+    String data = "";
+    String name;
+    unsigned short tempData;
+    float final_data;
+
+    for(int i = 0; i < DATATYPE_COUNT; i++) {
+        //Order must be moisture, temperature, sunlight, phosphate
+        if(i == 0) {
+            name = MOISTURE;
+        } else if(i == 1) {
+            name = TEMPERATURE;
+        } else if(i == 2) {
+            name = SUNLIGHT;
+        } else {
+            name = PHOSPHATE;
+        }
+        data += "\"";
+
+        //open up datapoint's namespace in read only mode
+        prefs.begin(name.c_str(), true);
+
+        tempData = prefs.getUShort(String(sendCount).c_str());
+
+        prefs.end();
+
+        //TODO Convert to double according to datatype
+        if(i == 0) {
+            //Moisture
+            /*TODO need to get calibration data before being able to get a
+             * percentage, see following link*/
+            //https://wiki.dfrobot.com/Capacitive_Soil_Moisture_Sensor_SKU_SEN0193#target_0
+            /*
+             * calculation to convert from raw value to percentage are just
+             * guesstimates based on data from the above link and are likely not
+             * accurate. More research is needed
+             */
+            tempData -= MOISTURE_WET;
+            //Get percent dry
+            final_data = tempData / (MOISTURE_DRY - MOISTURE_WET);
+            //Invert to get percent wet
+            final_data = 1 - final_data;
+        } else if(i == 1) {
+            //Temperature
+            //calculations from here:
+            //https://learn.adafruit.com/thermistor/using-a-thermistor
+            //Converts temperature to degrees celcius
+            final_data = 1023 / tempData - 1;
+            final_data = TEMPERATURE_OTHER_RESISTOR / final_data;
+
+            final_data = final_data / THERMISTOR_NOMINAL;
+            final_data = log(final_data);
+            final_data /= BCOEFFICIENT;
+            final_data += 1.0 / (TEMPERATURE_NOMINAL + 273.15);
+            final_data = 1.0 / final_data;
+            final_data -= 273.15;
+        } else if(i == 2) {
+            //Sunlight
+            //TODO Find out how to calculate this data
+            final_data = tempData;
+        } else {
+            //Phosphate
+            //TODO Find out how to calculate this data
+            final_data = tempData;
+        }
+        data += String(final_data).c_str();
+
+        //add comma and space after all elements except the last one
+        if(i < (DATATYPE_COUNT-1)) {
+            data += ", ";
+        }
+        data+= "\"";
+    }
+
+    return data;
+}
+
+/*******************************************************************************
+ * sendJsonRPCRequest()
+ *
+ * This code sends one jsonRPC request. Due to issues with the jsonrpc library,
+ * we're creating a jsonrpc string manually and parsing the response to confirm
+ * it worked correctly. This is probably not ideal, but it seems to work for now
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *
+ * NOTE:
+ */
+static void sendJsonRPCRequest() {
+    String data = getDataAsArrayString();
+
+    //no data to be sent
+    if(data == "") {
+        return;
+    }
+
+    String name;
+
+    //Examples used as reference: https://www.jsonrpc.org/specification
+    String testjsonrpccall =
+        "{\"jsonrpc\": \"2.0\", \"method\": \"setSensorData\", \"params\": [["
+        + data
+        + "]], \"id\": 1}";
+    //Serial.println("Sending following http request to " + HOST);
+    //Serial.println(testjsonrpccall);
+
+    httpclient.begin(HOST);
+    int httpcode = httpclient.POST(testjsonrpccall);
+    if (httpcode > 0) {
+        //Serial.println("httpcode is > 0. payload:");
+        String payload = httpclient.getString();
+        //Serial.println(payload);
+        if(httpcode == HTTP_CODE_OK) {
+            //Serial.println("end payload. httpcode is OK");
+
+            if(payload.indexOf("\"result\": true") != -1) {
+                //Serial.println("Hub received data successfully!");
+                //Remove sent data
+                for(int i = 0; i < DATATYPE_COUNT; i++) {
+                    if(i == 0) {
+                        name = MOISTURE;
+                    } else if(i == 1) {
+                        name = TEMPERATURE;
+                    } else if(i == 2) {
+                        name = SUNLIGHT;
+                    } else {
+                        name = PHOSPHATE;
+                    }
+
+                    //open up datapoint's namespace in read/write mode
+                    prefs.begin(name.c_str(), true);
+
+                    prefs.remove(String(sendCount).c_str());
+                    prefs.end();
+                }
+                //Increment sendCount
+                sendCount++;
+                sendCount %= DATAPOINT_COUNT_LIMIT;
+                prefs.begin("counts", false);
+                prefs.putUChar("send", sendCount);
+                prefs.end();
+            } else {
+                //Serial.println("Hub didn't receive data successfully");
+            }
+        } else {
+            //Serial.println("end payload. httpcode is not OK");
+        }
+
     } else {
-        prefs.begin("temp"); // Use the temperature ("temp") preferences namespace
-
-        //array to store data in, with two slots for 2 bytes of adc_value
-        uint8_t temperature_data[2];
-
-        //most significant 8 stored bits first
-        temperature_data[0] = (uint8_t) adc_value >> 8;
-        //then the least significant 8 bits
-        temperature_data[1] = (uint8_t) (adc_value & 0xFF);
-
-        //store the new data
-        prefs.putBytes("temp", temperature_data, 2*sizeof(uint8_t));
-
-        //temp data is now valid
-        prefs.begin("temp_is_valid"); // Use the temperature check ("temp_is_valid") preferences namespace
-        prefs.putBool("temp_is_valid", true);
+        //Serial.println("POST failed. Error:");
+        //Serial.println(httpclient.errorToString(httpcode).c_str());
     }
+
+    httpclient.end();
 }
 
-//function that takes a pointer to a list                       
-//then adds the Moisture variable to end of list 
+/*******************************************************************************
+ * initialize()
+ *
+ * This code runs any initialization the sensor hardware needs. Currently it
+ * just makes sure the counts are correct
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *
+ * NOTE:
+ */
+void initialize() {
+    //Make sure counts are correct
+    prefs.begin("counts", true);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+    prefs.end();
+}
+
+/*******************************************************************************
+ * sampleAndStoreMoisture()
+ *
+ * This function samples the moisture levels and stores it in the eeprom in case
+ * the sensor loses power
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   activates adc to read from the sensors, stores data in the eeprom
+ *
+ * NOTE:
+ */
 void sampleAndStoreMoisture(){
-    
-    /* uses GPIO 26 and ADC #2*/
+    uint16_t average = analogRead(MOISTURE_PIN);
 
-    /*this samples the  value from the sensor*/
-    uint16_t adc_moist = analogRead(26);
-    Serial.println("Moist ADC value: ");
-    Serial.println(adc_moist);
-
-    /*Now we need to store the data collected from moisture sensor*/
-
-    /* if the data is valid*/
-    if(prefs.getBool("moist_valid")){
-
-        /*size of array*/ 
-        size_t aLength;
-        
-        /*begin lookig for data regardign moisture (moist)*/
-        prefs.begin("moist",false);
-
-        /*aLength will equal to size of array*/
-        aLength = prefs.getBytesLength("moist");
-
-        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
-        uint8_t moistureData[aLength + 2];
-        
-        /*asks for old data to prevent data overwrite*/
-        prefs.getBytes("moist", moistureData, aLength);
-
-        /*first incoming data entry will be the most signigficant bit*/
-        moistureData[aLength] = (uint8_t) adc_moist >> 8;
-        
-        /*the next data entry will be the least significant bits*/
-        moistureData[aLength + 1] = (uint8_t) (adc_moist & 0xff);
-
-        /*put bytes into array*/
-        prefs.putBytes("moist", moistureData, aLength);
-
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(MOISTURE_PIN);
+        average /= 2;
+        delay(10);
     }
-    
-    /*if we are just starting to read in data*/
-    else{
-        
-        prefs.begin("moist",false);
+    //Serial.println(average);
 
-        /*the very first input will be the most significant bit*/
-        moistureData[0] = (uint8_t) adc_moist >> 8;
-
-        /*the next 8 bits (least significant bits) will store the next entry*/
-        moistureData[aLength + 1] = (uint8_t) (adc_moist & 0xff);
-        
-           /*put bytes into array*/
-        prefs.putBytes("moist", moistureData, aLength);
-
-        prefs.begin("Moist_valid");
-        prefs.putBool("Moist_valid",true);
-    }
+    storeData(MOISTURE, average);
 }
 
-//function that takes a pointer to a list                       
-//then adds the phosphate variable to end of list 
-void sampleAndStorePhosphate(){
-    
-    uint16_t adc_phos = analogRead(26);
-    Serial.println("phosphate ADC value: ");
-    Serial.println(adc_phos);
+/*******************************************************************************
+ * sampleAndStoreTemperature()
+ *
+ * This function samples the temperature and stores it in the eeprom in case the
+ * sensor loses power
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   activates adc to read from the sensors, stores data in the eeprom
+ *
+ * NOTE:
+ */
+void sampleAndStoreTemperature(){
+    //https://learn.adafruit.com/thermistor/using-a-thermistor
+    uint16_t average = analogRead(TEMPERATURE_PIN);
 
-       if(prefs.getBool("phos_valid")){
-
-        /*size of array*/ 
-        size_t aLength;
-        
-        /*begin lookig for data regardign moisture (moist)*/
-        prefs.begin("phosphate",false);
-
-        /*aLength will equal to size of array*/
-        aLength = prefs.getBytesLength("phosphate");
-
-        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
-        uint8_t phosphateData[aLength + 2];
-        
-        /*asks for old data to prevent data overwrite*/
-        prefs.getBytes("phosphate", phosphateData, aLength);
-
-        /*first incoming data entry will be the most signigficant bit*/
-        phosphateData[aLength] = (uint8_t) adc_phos >> 8;
-        
-        /*the next data entry will be the least significant bits*/
-        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
-
-        /*put bytes into array*/
-        prefs.putBytes("moist", phosphateData, aLength);
-
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(TEMPERATURE_PIN);
+        average /= 2;
+        delay(10);
     }
 
-    /*if we are just starting to read in data*/
-    else{
-        
-        prefs.begin("phosphate",false);
+    //Serial.println(average);
 
-        /*the very first input will be the most significant bit*/
-        phosphateData[0] = (uint8_t) adc_phos >> 8;
-
-        /*the next 8 bits (least significant bits) will store the next entry*/
-        phosphateData[aLength + 1] = (uint8_t) (adc_phos & 0xff);
-        
-           /*put bytes into array*/
-        prefs.putBytes("moist", phosphateData, aLength);
-
-        prefs.begin("Phosphate_valid");
-        
-        }
+    storeData(TEMPERATURE, average);
 }
 
-//function that takes a pointer to a list                       
-//then adds the sunlight variable to end of list 
+/*******************************************************************************
+ * sampleAndStoreSunlight()
+ *
+ * This function samples the sunlight levels and stores it in the eeprom in case
+ * the sensor loses power
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   activates adc to read from the sensors, stores data in the eeprom
+ *
+ * NOTE:
+ */
 void sampleAndStoreSunlight(){
-    
-    uint16_t adc_sun = analogRead(27);
-    Serial.println("Sunlight ADC value: ");
-    Serial.println(adc_sun);
+    uint16_t average = analogRead(SUNLIGHT_PIN);
 
-       if(prefs.getBool("sun_valid")){
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(SUNLIGHT_PIN);
+        average /= 2;
+        delay(10);
+    }
+    //Serial.println(average);
 
-        /*size of array*/ 
-        size_t aLength;
-        
-        /*begin lookig for data regardign moisture (moist)*/
-        prefs.begin("sunlight",false);
-
-        /*aLength will equal to size of array*/
-        aLength = prefs.getBytesLength("sunlight");
-
-        /* unsigned 8 bit array will have 2 extra slots of 2 new read data */
-        uint8_t sundlightData[aLength + 2];
-        
-        /*asks for old data to prevent data overwrite*/
-        prefs.getBytes("sunlight", sunlightData, aLength);
-
-        /*first incoming data entry will be the most signigficant bit*/
-        sunlightData[aLength] = (uint8_t) adc_sun >> 8;
-        
-        /*the next data entry will be the least significant bits*/
-        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
-
-        /*put bytes into array*/
-        prefs.putBytes("sunlight", sunlightData, aLength);
-
-    } /*if we are just starting to read in data*/
-    else{
-        
-        prefs.begin("sunlight",false);
-
-        /*the very first input will be the most significant bit*/
-        sunlightData[0] = (uint8_t) adc_sun >> 8;
-
-        /*the next 8 bits (least significant bits) will store the next entry*/
-        sunlightData[aLength + 1] = (uint8_t) (adc_sun & 0xff);
-        
-           /*put bytes into array*/
-        prefs.putBytes("sunlight", sunlightData, aLength);
-
-        prefs.begin("Sunlight_valid");
-        
-        }
+    storeData(SUNLIGHT, average);
 }
 
-//function that takes in pointer to list
-//then transmitts list containing temperature
-void transmitStoredTemperature(){
-    
-    //Storing data as raw adc value int, need to convert to celcius before sending to hub
-    //Also, if it was successfully transmitted, then set temp_is_valid to false
-     
+/*******************************************************************************
+ * sampleAndStorePhosphate()
+ *
+ * This function samples the phosphate levels and stores it in the eeprom in
+ * case the sensor loses power
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   activates adc to read from the sensors, stores data in the eeprom
+ *
+ * NOTE:
+ */
+void sampleAndStorePhosphate(){
+    uint16_t average = analogRead(PHOSPHATE_PIN);
+
+    //take multiple samples and average them for a more accurate reading
+    //Subtract 1 from limit since we already read once
+    for (int i = 0; i < (NUM_SAMPLES - 1); i++) {
+        average += analogRead(PHOSPHATE_PIN);
+        average /= 2;
+        delay(10);
+    }
+    //Serial.println(average);
+
+    storeData(PHOSPHATE, average);
 }
 
-//function that takes in pointer to list 
-//then transmitts list containing moisture 
-void transmitStoredMoisture(){
-    //TODO fill in
+/*******************************************************************************
+ * incrementCount()
+ *
+ * This code increments the count used to determine where data should be stored
+ * in the eeprom, and should only be run once all the sensors have stored their
+ * data for the previous count
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   the count in the eeprom used to store the sensor data in the correct spot
+ *
+ * NOTE:
+ */
+void incrementCount() {
+    prefs.begin("counts", false);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+
+    if(storeCount == (sendCount - 1) || (sendCount == 0 && storeCount == DATAPOINT_COUNT_LIMIT)) {
+        sendCount++;
+        sendCount %= DATAPOINT_COUNT_LIMIT;
+        prefs.putUChar("send", sendCount);
+    }
+
+    storeCount++;
+    storeCount %= DATAPOINT_COUNT_LIMIT;
+
+    prefs.putUChar("store", sendCount);
+    prefs.end();
 }
 
-//function that takes in pointer to list 
-//then transmitts list containing phosphate
-void transmitStoredPhosphate(){
-    //TODO fill in
-}
-
-//function that takes in pointer to list 
-//then transmitts list containing sunlight 
-void transmitStoredSunlight(){
-    //TODO fill in
-}
-
-void turnOffWiFi() { 
-    WiFi.mode(WIFI_OFF);
-}
-
-void turnOnWifi() {
-    WiFi.enableSTA(true);
-}
-
+/*******************************************************************************
+ * connectToWifi()
+ *
+ * This code connects to a specified wifi network
+ *
+ * arguments:
+ *   ssid - the wifi network name
+ *   password - the wifi network password
+ *
+ * returns:
+ *
+ * changes:
+ *   turns on wifi hardware and connects to the network
+ *
+ * NOTE: currently it waits for 10 seconds before timing out, but that can be
+ *   changed. Also, assumes the wifi network has a password. I'm not sure what
+ *   the best way to connect to a network without a password would be, but the
+ *   source code for the ESP32 wifi libraries can be found here if you need to
+ *   do that: https://github.com/espressif/arduino-esp32/tree/master/libraries
+ */
 void connectToWifi(const char* ssid, const char* password) {
-    turnOnWifi();
-    // We start by connecting to a WiFi network
+    //connect to a WiFi network
     WiFi.begin(ssid, password);
 
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+    //Wait for a connection for 10 minutes, or 600 seconds
+    for(int i = 0; i < 600 && WiFi.status() != WL_CONNECTED; i++) {
+        //delay one second
+        delay(1000);
     }
+}
+
+/*******************************************************************************
+ * sendAllData()
+ *
+ * This function loops through and sends all the data it's collected to the hub
+ *
+ * arguments:
+ *
+ * returns:
+ *
+ * changes:
+ *   The sendJsonRPCRequest function will delete data from the eeprom if it was
+ *   received by the hub successfully
+ *
+ * NOTE:
+ */
+void sendAllData() {
+    //Make sure counts are correct
+    prefs.begin("counts", true);
+    sendCount = prefs.getUChar("send", sendCount);
+    storeCount = prefs.getUChar("store", storeCount);
+    prefs.end();
+
+    //Ensure this will only loop a finite number of times
+    int loopCount = 0;
+
+    //Find the number of loops it will take to get from the sendCount to the
+    // storeCount
+    if(storeCount > sendCount) {
+        loopCount = storeCount - sendCount;
+    } else if(sendCount > storeCount) {
+        loopCount = (DATAPOINT_COUNT_LIMIT - sendCount) + storeCount;
+    }
+
+    if(loopCount > DATAPOINT_COUNT_LIMIT) {
+        loopCount = DATAPOINT_COUNT_LIMIT;
+    }
+
+    for(int i = 0; i < loopCount; i++) {
+        sendJsonRPCRequest();
+    }
+}
+
+/*******************************************************************************
+ * activateLowPowerMode(int sleepSeconds)
+ *
+ * This function will put the sensor into deep sleep for a certain number of
+ * seconds
+ *
+ * arguments:
+ *   sleepSeconds - the number of seconds to put the sensor into deep sleep for
+ *
+ * returns:
+ *
+ * changes:
+ *   puts the sensor into deep sleep
+ *
+ * NOTE: it's also possible to configure other methods to wake the sensor, if
+ *   those are desired in the future you can find examples of it here:
+ *   https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/DeepSleep
+ */
+void activateLowPowerMode(int sleepSeconds){
+    turnOffWiFi();
+
+    //configure esp to wake from deep sleep after specified time
+    esp_sleep_enable_timer_wakeup(sleepSeconds * uS_TO_S_FACTOR);
+
+    //Start deep sleep
+    Serial.flush();
+    esp_deep_sleep_start();
 }

@@ -1,7 +1,21 @@
+"""
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from SolarSENSE.models import Video
+from SolarSENSE.models import Video, SensorCollections
 from django.urls import reverse
 from django.db.models import Case, CharField, Value, When, Count
 from django.contrib.contenttypes.models import ContentType
@@ -88,7 +102,14 @@ def changeTags(request):
                 video.tags.add(tag)
     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
-    
+def stats(request):
+  
+    sensorQuery = SensorCollections.objects.all() 
+    context = {
+        "query":sensorQuery 
+    }
+    return render(request,'stats.html',context)  
+
 # def importTagSettings(request):
 #     return HttpResponseRedirect(reverse("admin:SolarSENSE_video_changelist"))
 
