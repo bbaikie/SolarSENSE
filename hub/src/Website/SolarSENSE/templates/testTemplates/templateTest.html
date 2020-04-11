@@ -1,0 +1,16 @@
+
+{% extends 'root.html' %}
+{% load static %}
+
+{% block content %} 
+    <div class="container text-danger">
+        This is a static image:
+        <img src="{% static "puppy1.jpg" %}" alt="Puppy"><br>
+    </div>
+    This is a media image:
+    <img src="{{ media.content.url }}" alt="stuff"><br>
+    This is a video:
+    <video width="320" height="240" controls>
+        <source src="{% static "ForBiggerBlazes.mp4" %}" type="video/mp4">
+    </video><br>
+{% endblock %}
