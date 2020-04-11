@@ -20,6 +20,6 @@ urlpatterns = [
     path('test/', views.test, name='test'),
     path('uploadVideos/', views.uploadVideos, name="uploadVideos"),
     path('changeTags/', views.changeTags, name="changeTags"),
-    path('', VideosView.as_view()),
+    path('', VideosView.as_view(), name="videosView"),
     path('statistics/', views.stats, name='statistics'),
 ]
