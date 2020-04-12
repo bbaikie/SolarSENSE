@@ -38,7 +38,7 @@ class VideosView(ListView):
             latest.temperature)
             return latest.filter(tags__name__in=result)
         else: 
-            return super.get_queryset()
+            return super().get_queryset()
     
     def determine_boundary(self, sun, phos, moisture, temp):
         tags = []
