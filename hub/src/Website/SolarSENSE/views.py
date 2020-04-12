@@ -31,6 +31,46 @@ class VideosView(ListView):
     model = Video
     template_name = "list.html"
 
+    def get_queryset(self):
+        if SensorCollections.objects.all().count() > 0:
+            latest = SensorCollections.objects.order_by('-id')[0]
+            result = self.determine_boundary(latest.sunlight, latest.phosphate, latest.moisture, 
+            latest.temperature)
+            return latest.filter(tags__name__in=result)
+        else: 
+            return super.get_queryset()
+    
+    def determine_boundary(self, sun, phos, moisture, temp):
+        tags = []
+        if sun > 100:
+            tags.append("High Sunlight")
+        elif sun > 50:
+            tags.append("Medium Sunlight")
+        else:
+            tags.append("Low Sunlight")
+
+        if sun > 100:
+            tags.append("High Phosphate")
+        elif sun > 50:
+            tags.append("Medium Phosphate")
+        else:
+            tags.append("Low Phosphate")
+
+        if sun > 100:
+            tags.append("High Moisture")
+        elif sun > 50:
+            tags.append("Medium Moisture")
+        else:
+            tags.append("Low Moisture")
+
+        if sun > 100:
+            tags.append("High Moisture")
+        elif sun > 50:
+            tags.append("Medium Moisture")
+        else:
+            tags.append("Low Moisture")
+        return tags
+
 # Writes uploaded videos to database and handles upload to file system
 def uploadVideos(request):
     if request.method == "POST":
