@@ -26,6 +26,11 @@
 							<a class="nav-link" href="{% url 'admin:index' %}"> Admin </a>
 						{% endblock admin_link %}
 					</li>
+					<li class="nav-item">
+						{% block admin_link %}
+							<a class="nav-link" href="{% static '/bionet/index.html' %}"> Bionet Library </a>
+						{% endblock admin_link %}
+					</li>
 				</ul>
 			</nav>
 		{% endblock head %}
