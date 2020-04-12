@@ -4,10 +4,42 @@
 <p>Select tags to apply:</p>
 <form action="{% url 'changeTags' %}" method="post">
     {% csrf_token %}
-    <label for="This">This</label>
-    <input type="checkbox" name="Option" id="This" value="This"><br>
-    <label for="That">That</label>
-    <input type="checkbox" name="Option" id="That" value="That"><br>
+    <label for="Low Temperature">Low Temperature</label>
+    <input type="checkbox" name="Option" id="Low Temperature" value="Low Temperature"><br>
+
+    <label for="Medium Temperature">Medium Temperature</label>
+    <input type="checkbox" name="Option" id="Medium Temperature" value="Medium Temperature"><br>
+
+    <label for="High Temperature">High Temperature</label>
+    <input type="checkbox" name="Option" id="High Temperature" value="High Temperature"><br>
+
+    <label for="Low Sunlight">Low Sunlight</label>
+    <input type="checkbox" name="Option" id="Low Sunlight" value="Low Sunlight"><br>
+
+    <label for="Medium Sunlight">Medium Sunlight</label>
+    <input type="checkbox" name="Option" id="Medium Sunlight" value="Medium Sunlight"><br>
+
+    <label for="High Sunlight">High Sunlight</label>
+    <input type="checkbox" name="Option" id="High Sunlight" value="High Sunlight"><br>
+
+    <label for="Low Moisture">Low Moisture</label>
+    <input type="checkbox" name="Option" id="Low Moisture" value="Low Moisture"><br>
+
+    <label for="Medium Moisture">Medium Moisture</label>
+    <input type="checkbox" name="Option" id="Medium Moisture" value="Medium Moisture"><br>
+
+    <label for="High Moisture">High Moisture</label>
+    <input type="checkbox" name="Option" id="High Moisture" value="High Moisture"><br>
+
+    <label for="Low Phosphate">Low Phosphate</label>
+    <input type="checkbox" name="Option" id="Low Phosphate" value="Low Phosphate"><br>
+
+    <label for="Medium Phosphate">Medium Phosphate</label>
+    <input type="checkbox" name="Option" id="Medium Phosphate" value="Medium Phosphate"><br>
+
+    <label for="High Phosphate">High Phosphate</label>
+    <input type="checkbox" name="Option" id="High Phosphate" value="High Phosphate"><br>
+
     <input type="submit" value="Submit">
 </form>
 {% endblock content %}
