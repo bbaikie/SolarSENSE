@@ -3,7 +3,12 @@
 {% block content %}
     <div class="list-group">
         {% for video in page_obj %}
-            <a href="{{ video.content.url }}" class="list-group-item list-group-item-action"> {{ video.name }} </a>
+            <a href="{{ video.content.url }}" class="list-group-item list-group-item-action d-flex align-items-center"> 
+                {{ video.name }}
+                {% for tag in video.tags %}
+                    <div class="mx-3 badge badge-primary badge-pill"> {{ tag.name }} </div>
+                {% endfor %} 
+            </a>
         {% endfor %}
     </div>
 
