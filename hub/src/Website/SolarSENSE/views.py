@@ -36,7 +36,7 @@ class VideosView(ListView):
             latest = SensorCollections.objects.order_by('-id')[0]
             result = self.determine_boundary(latest.sunlight, latest.phosphate, latest.moisture, 
             latest.temperature)
-            return latest.filter(tags__name__in=result)
+            return Video.objects.filter(tags__name__in=result)
         else: 
             return super().get_queryset()
     
