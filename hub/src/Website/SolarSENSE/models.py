@@ -1,3 +1,17 @@
+"""
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from taggit.managers import TaggableManager
@@ -31,14 +45,7 @@ class Video(models.Model):
 
 class SensorCollections(models.Model):
     date_time = models.DateTimeField(auto_now_add=True)
-<<<<<<< HEAD
     moisture = models.DecimalField(max_digits=5, decimal_places=2 , default='0')
     temperature = models.DecimalField(max_digits=5, decimal_places=2, default='0')
     sunlight = models.DecimalField(max_digits=5, decimal_places=2, default='0')
     phosphate = models.DecimalField(max_digits=5, decimal_places=2, default='0')
-=======
-    moisture = models.DecimalField(max_digits=5, decimal_places=2)
-    temperature = models.DecimalField(max_digits=5, decimal_places=2)
-    sunlight = models.DecimalField(max_digits=5, decimal_places=2)
-    phosphate = models.DecimalField(max_digits=5, decimal_places=2)
->>>>>>> 58fcd6678295281009c4408355d5c1fee05255a6

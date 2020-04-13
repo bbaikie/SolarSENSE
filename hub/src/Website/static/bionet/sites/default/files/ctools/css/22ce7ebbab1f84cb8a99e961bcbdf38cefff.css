@@ -1,0 +1,120 @@
+.panels-flexible-plant_health_layout_ .panels-flexible-region {
+  padding: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-region-inside {
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-region-inside-first {
+  padding-left: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-region-inside-last {
+  padding-right: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-column {
+  padding: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-column-inside {
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-column-inside-first {
+  padding-left: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-column-inside-last {
+  padding-right: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-row {
+  padding: 0 0 0.5em 0;
+  margin: 0;
+}
+
+.panels-flexible-plant_health_layout_ .panels-flexible-row-last {
+  padding-bottom: 0;
+}
+
+.panels-flexible-column-plant_health_layout_-1 {
+  float: left;
+  width: 16.8580%;
+}
+
+.panels-flexible-column-plant_health_layout_-main {
+  float: left;
+  width: 82.1420%;
+}
+
+.panels-flexible-plant_health_layout_-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-plant_health_layout_ {
+  width: auto;
+}
+
+.panels-flexible-region-plant_health_layout_-left_column {
+  float: left;
+  width: 99.0000%;
+}
+
+.panels-flexible-row-plant_health_layout_-2-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-region-plant_health_layout_-absolute_top {
+  float: left;
+  width: 99.0000%;
+}
+
+.panels-flexible-row-plant_health_layout_-6-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-column-plant_health_layout_-4 {
+  float: left;
+  width: 49.4124%;
+}
+
+.panels-flexible-column-plant_health_layout_-5 {
+  float: left;
+  width: 49.5876%;
+}
+
+.panels-flexible-row-plant_health_layout_-3-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-region-plant_health_layout_-header_left {
+  float: left;
+  width: 99.0000%;
+}
+
+.panels-flexible-row-plant_health_layout_-7-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-region-plant_health_layout_-header_right {
+  float: left;
+  width: 99.0000%;
+}
+
+.panels-flexible-row-plant_health_layout_-8-inside {
+  padding-right: 0px;
+}
+
+.panels-flexible-region-plant_health_layout_-center {
+  float: left;
+  width: 99.0000%;
+}
+
+.panels-flexible-row-plant_health_layout_-main-row-inside {
+  padding-right: 0px;
+}
+

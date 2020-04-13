@@ -113,9 +113,23 @@ To access the internet add a wifi network following [these](https://www.raspberr
 * Gunicorn Application Log: `sudo journalctl -u gunicorn`
 * Gunicorn Socket Log: `sudo journalctl -u gunicorn.socket`
 
-### Set up JSON-RPC for C++
-This is only necessary for developing for the ESP32 sensor processor board, and should be done on whichever computer is being used for programming, not the hub Raspberry Pi (unless the hub Raspberry Pi is the computer being used to develop for the ESP32).
-1. Navigate to the [json-rpc-cpp repository](https://github.com/cinemast/libjson-rpc-cpp#install-the-framework)
-2. Follow the instructions for how to install the framework for whichever platform you're developing on.
-3. Once the JSON-RPC libraries are installed, the sensor code will be able to be compiled
+## Setting up the dev environment for programming the sensor
+### Install Arduino IDE (necessary whether you're building and flashing with it or not)
+1. Install the latest version of the the [Arduino IDE](https://www.arduino.cc/en/main/software)
+2. Follow the instructions for adding the ESP32 libraries to Arduino IDE, either using Arduino IDE Boards Manager or adding the development repository. Those instructions can be found in the ESP32 github repo README.md: https://github.com/espressif/arduino-esp32
 
+### Building and flashing the sensor code
+#### Building and flashing using Arduino IDE 
+1. Clone this github repo at https://github.com/jeremiah-miller/SolarSENSE.git
+2. Open Arduino IDE and open the file "<Repo dir>/sensor/src/main.ino"
+3. It will tell you that you need to open it in a folder called "main" and offer to make the folder and move it for you. Let it do that
+4. Copy all other files in "sensor/src/" into the new "sensor/src/main/" folder
+5. To build the code, click the check mark/"Verify" button in Arduino IDE
+6. To flash the code to the sensor, click the right arrow/"Upload" button in Arduino IDE
+7. NOTE: if you use this method, you will need to copy any files you edit from the "sensor/src/main/" folder back into the "sensor/src/" folder, and commit those instead of the files in "sensor/src/main", in order to preserve the github file structure
+
+#### Building and flashing using the Makefile
+1. Clone this github repo at https://github.com/jeremiah-miller/SolarSENSE.git
+2. From a bash terminal, navigate to where you cloned the repo
+3. To build the code, run `make sensor`
+4. To flash the code to the sensor, run `make flash_sensor`
