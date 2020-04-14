@@ -39,13 +39,15 @@ HTTPClient httpclient;
 #define MOISTURE "mois"
 #define TEMPERATURE "temp"
 #define SUNLIGHT "sun"
-#define PHOSPHATE "ph"
+//Phosphate uses same data as moisture, just a different algorithm
+#define PHOSPHATE MOISTURE
 
 //TODO confirm that these are the correct pins to read from
 #define MOISTURE_PIN 26
 #define TEMPERATURE_PIN 25
-#define SUNLIGHT_PIN 27
-#define PHOSPHATE_PIN 26
+#define SUNLIGHT_PIN 34
+//Phosphate uses same data as moisture, just a different algorithm
+#define PHOSPHATE_PIN MOISTURE_PIN
 
 #define NUM_SAMPLES 5
 
@@ -455,8 +457,10 @@ void sampleAndStoreSunlight(){
  * changes:
  *   activates adc to read from the sensors, stores data in the eeprom
  *
- * NOTE:
+ * NOTE: Made obsolete by the fact that the ph can be calculated from the
+ *       moisture sensor data
  */
+/*
 void sampleAndStorePhosphate(){
     uint16_t average = analogRead(PHOSPHATE_PIN);
 
@@ -471,6 +475,7 @@ void sampleAndStorePhosphate(){
 
     storeData(PHOSPHATE, average);
 }
+*/
 
 /*******************************************************************************
  * incrementCount()

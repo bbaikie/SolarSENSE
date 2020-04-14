@@ -45,7 +45,8 @@ void setup() {
     //Collect data
     sampleAndStoreTemperature();
     sampleAndStoreMoisture();
-    sampleAndStorePhosphate();
+    //Phosphate uses same data as moisture, just a different algorithm, so don't need to recollect data
+    //sampleAndStorePhosphate();
     sampleAndStoreSunlight();
     incrementCount();
 
