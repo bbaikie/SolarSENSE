@@ -34,7 +34,7 @@
 Preferences prefs;
 HTTPClient httpclient;
 
-#define DATAPOINT_COUNT_LIMIT 24
+#define DATAPOINT_COUNT_LIMIT 48
 
 #define MOISTURE "mois"
 #define TEMPERATURE "temp"
