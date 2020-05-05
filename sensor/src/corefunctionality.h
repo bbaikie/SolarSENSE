@@ -16,7 +16,8 @@ void initialize(); //Run any initialization
 void sampleAndStoreMoisture(); //Get moisture data
 void sampleAndStoreTemperature(); //Get temperature data
 void sampleAndStoreSunlight(); //Get sunlight data
-void sampleAndStorePhosphate(); //Get phosphate data
+//OBSOLETE Get phosphate data uses moisture data
+//void sampleAndStorePhosphate();
 void incrementCount(); //Increment the count after all data has been collected
 //Connect to a wifi network
 void connectToWifi(const char* ssid, const char* password);
